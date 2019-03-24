@@ -11,15 +11,18 @@ build () {
 
 buildLinux () {
 
-	make -f Output/Makelinux
+	cp -a Assets/. Output/Linux/Assets/
+
+	make linux
 
 }
 
 buildWin () {
 	
 	cp Lib/SDL/lib/win32/SDL2.dll Output/Windows/SDL2.dll
+	cp -a Assets/. Output/Windows/Assets/
 
-	make -f Output/Makewin
+	make win
 
 }
 
