@@ -53,10 +53,12 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
             printf("%s", errorString[ERR_CANT_CREATE_WINDOW]);
             return -1;
         } else {
-            mainScreenSurface = SDL_GetWindowSurface(mainWindow);
+	    //La riga successiva funziona su Winzozz, Sparky Linux ma non va su Fedora 29. That's illegal
+	    //mainScreenSurface = SDL_GetWindowSurface(mainWindow);
             mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
             if(mainRenderer == NULL) {
                 printf("%s", errorString[ERR_INVALID_RENDERER]);
+		printf("\n%s", SDL_GetError());
                 return -1;
             } else {
                 //SDL_initFramerate(FPSLimiter);
