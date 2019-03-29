@@ -1,6 +1,4 @@
 #ifndef BRISCOLA_H_INCLUDED
 #define BRISCOLA_H_INCLUDED
 
-
-
 #endif // BRISCOLA_H_INCLUDED

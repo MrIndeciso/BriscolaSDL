@@ -1,11 +1,26 @@
 #include "GUIUtil.h"
 
-int drawElement(elemGUI element){
+int drawElement(elemGUI element, SDL_Renderer *mainRenderer){
 
-    return 0;
+  if(!element.active) return 0;
+
+  switch(element.type) {
+
+    case GUI_IMAGE:
+
+      SDL_RenderCopy(mainRenderer, element.texture, NULL, &element.pos);
+
+      break;
+
+    default:
+      return 0;
+      break;
+
+  }
+
+  return 0;
 }
 
-elemGUI createElement(int active, int type, elemPos pos, int* args){
+int createElement(int active, int type, SDL_Rect pos, int* args){
 
 }
-

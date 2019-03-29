@@ -5,6 +5,7 @@
 
 #include "Modes/Briscola.h"
 #include "Render/RenderUtil.h"
+#include "Render/GUIUtil.h"
 
 int mainInit();
 int mainLoad();
@@ -28,6 +29,7 @@ SDL_Event e;
 int breakLoop = 0;
 
 int main(int argc, char* args[]){
+
     if(!mainInit()){ //Main program starts here
 
         //Load textures
@@ -41,9 +43,11 @@ int main(int argc, char* args[]){
     mainClose();
 
     return 0;
+
 }
 
 int mainInit(){ //This really makes no sense because with a return the "else" isn't needed but I'll fix it another time
+
     if(SDL_Init(SDL_INIT_VIDEO)<0) {
         printf("%s", errorString[ERR_CANT_LOAD_SDL]);
         return -1;
@@ -68,9 +72,11 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
     }
 
     return 0;
+
 }
 
 int mainClose(){
+
     SDL_DestroyRenderer(mainRenderer);
     mainRenderer = NULL;
 
@@ -83,9 +89,21 @@ int mainClose(){
 }
 
 int mainLoop(){
+
+    elemGUI blyat;
+    blyat.active = 1;
+    blyat.type = GUI_IMAGE;
+    blyat.pos.x = 100;
+    blyat.pos.y = 100;
+    blyat.pos.w = 100;
+    blyat.pos.h = 100;
+    blyat.texture = loadTexture("Assets/Button.bmp", mainRenderer);
+
     while(!breakLoop) {
 
         SDL_RenderClear(mainRenderer);
+
+        drawElement(blyat, mainRenderer);
 
         SDL_RenderPresent(mainRenderer);
 
@@ -103,10 +121,13 @@ int mainLoop(){
     }
 
     return 0;
+
 }
 
 int mainLoad(){
+
     SDL_SetRenderDrawColor(mainRenderer, 0x80, 0xFF, 0x80, 0xFF); //Set background color
 
     return 0;
+
 }

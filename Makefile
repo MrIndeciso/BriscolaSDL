@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = briscola.c Modes/Briscola.c Render/RenderUtil.c Render/GUIUtil.c
+OBJS = briscola.c Modes/Briscola.c Render/RenderUtil.c Render/GUIUtil.c Render/GUIUtil.h
 
 #CC specifies which compiler we're using
 LCC = gcc
