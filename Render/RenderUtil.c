@@ -1,4 +1,5 @@
 #include "RenderUtil.h"
+#include "../Lib/SDL/include/SDL_ttf.h"
 
 #include <sys/stat.h>
 #include <stdio.h>
@@ -63,6 +64,28 @@ SDL_Texture* loadTexture(char* source, SDL_Renderer* renderer){
 
     //Returns a pointer to the image as SDL likes
     return loadedTexture;
+}
+
+SDL_Texture* loadFromText(char* text, SDL_Color textColor, SDL_Renderer* renderer, char* fontName, int fontSize){
+
+  SDL_Surface* temp = NULL;
+  SDL_Texture* texture = NULL;
+
+  TTF_Font* font;
+  font = TTF_OpenFont(fontName, fontSize);
+
+  temp = TTF_RenderText_Solid(font, text, textColor);
+
+  if(temp == NULL) return -1;
+
+  texture = SDL_CreateTextureFromSurface(renderer, temp);
+
+  if(texture == NULL) return -1;
+
+  SDL_FreeSurface(temp);
+
+  return texture;
+
 }
 
 int fileExists(char* source){

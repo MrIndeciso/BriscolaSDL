@@ -1,4 +1,5 @@
 #include "GUIUtil.h"
+#include "../Lib/SDL/include/SDL_ttf.h"
 
 int drawElement(elemGUI element, SDL_Renderer *mainRenderer){
 
@@ -6,10 +7,31 @@ int drawElement(elemGUI element, SDL_Renderer *mainRenderer){
 
   switch(element.type) {
 
-    case GUI_IMAGE:
+    case GUI_BUTTON:
+      {
+      SDL_Color temp;
+      SDL_GetRenderDrawColor(mainRenderer, &temp.r, &temp.g, &temp.b, &temp.a);
+      SDL_SetRenderDrawColor(mainRenderer, element.color.r, element.color.g, element.color.b, element.color.a);
+      SDL_RenderFillRect(mainRenderer, &element.pos);
+      SDL_SetRenderDrawColor(mainRenderer, temp.r, temp.g, temp.b, temp.a);
+      break;
+      } //Apparently if you want to declare a variable in a case you need to define the scope with {} because otherwise the compiler acts like it is retarded
 
+    case GUI_LABEL:
       SDL_RenderCopy(mainRenderer, element.texture, NULL, &element.pos);
+      break;
 
+    case GUI_TEXTBOX:
+      break;
+
+    case GUI_MESSAGE:
+      break;
+
+    case GUI_IMAGE:
+      SDL_RenderCopy(mainRenderer, element.texture, NULL, &element.pos);
+      break;
+
+    case GUI_POLY:
       break;
 
     default:
@@ -21,6 +43,28 @@ int drawElement(elemGUI element, SDL_Renderer *mainRenderer){
   return 0;
 }
 
-int createElement(int active, int type, SDL_Rect pos, int* args){
+elemGUI createElement(int active, int type, SDL_Rect pos, SDL_Color color, SDL_Texture *texture, int (*onClick)()){
+
+  elemGUI buffer;
+  buffer.active = active;
+  buffer.type = type;
+  buffer.pos = pos;
+  buffer.color = color;
+  buffer.texture = texture;
+  buffer.onClick = onClick;
+
+  return buffer;
+
+}
+
+int GUIEventInput(elemGUI element, SDL_Event e){
+
+  if(e.type == SDL_MOUSEBUTTONDOWN){
+      int x, y;
+      SDL_GetMouseState(&x, &y);
+
+      if(x>=element.pos.x && x<(element.pos.x+element.pos.w)&&y>=element.pos.y&&y<(element.pos.y+element.pos.h)) element.onClick();
+
+  }
 
 }

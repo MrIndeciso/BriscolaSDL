@@ -1,6 +1,6 @@
 build () {
 
-	clean
+	clear
 	
 	# build functions here
 
@@ -19,7 +19,8 @@ buildLinux () {
 
 buildWin () {
 	
-	cp Lib/SDL/lib/win32/SDL2.dll Output/Windows/SDL2.dll
+	cp Lib/SDL/lib/win32/*.dll Output/Windows/
+	cp Lib/SDL/lib/win32/LICENSE*.* Output/Windows/
 	cp -a Assets/. Output/Windows/Assets/
 
 	make win

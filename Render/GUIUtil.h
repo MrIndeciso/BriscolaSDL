@@ -3,37 +3,41 @@
 
 #include "../Lib/SDL/include/SDL.h"
 
+//Used to switch between types
 enum elementTypes {
     GUI_BUTTON,
     GUI_LABEL,
     GUI_TEXTBOX,
     GUI_MESSAGE,
     GUI_IMAGE,
+    GUI_POLY,
     GUICOUNT
 };
 
+//Useless for now
+enum polyTypes {
+  POLY_RECT,
+  POLYCOUNT
+};
+
 //This is almost Java
-typedef struct elemGUI elemGUI;
-struct elemGUI {
+//Should cover every possible usage
+typedef struct elemGUI {
     int active;
     int type;
     SDL_Rect pos;
+    SDL_Color color;
     SDL_Texture *texture;
-    int* args;
-};
+    int (*onClick)();
+} elemGUI;
 
-//IBaseEnterpriseVisitorOuputPrintableContextGeneratorSingletonMiddlewareStrategyConfiguratorFactoryReturner.class
-typedef struct textureElemGUI textureElemGUI;
-struct textureElemGUI {
-    elemGUI elemGUI;
-    SDL_Texture* texture;
-};
+//Just draws an element
+int drawElement(elemGUI element, SDL_Renderer* mainRenderer);
 
-int drawElement(elemGUI element, SDL_Renderer *mainRenderer);
-int drawTextureElement(textureElemGUI textureElemGUI);
+//Handles any SDL event for an element
+int GUIEventInput(elemGUI element, SDL_Event e);
 
-elemGUI createElement(int active, int type, SDL_Rect pos, int* args);
-
-
+//Creates a new element
+elemGUI createElement(int active, int type, SDL_Rect pos, SDL_Color color, SDL_Texture* texture, int (*onClick)());
 
 #endif // GUIUTIL_H_INCLUDED

@@ -15,6 +15,8 @@ int mainClose();
 int loadBackground();
 int loadMainScrBtts();
 
+int blyatto();
+
 const int SCR_WIDTH = 640;
 const int SCR_HEIGHT = 480;
 
@@ -65,8 +67,10 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
 		printf("\n%s", SDL_GetError());
                 return -1;
             } else {
-                //SDL_initFramerate(FPSLimiter);
-                //SDL_setFramerate(FPSLimiter, 60);
+                if(TTF_Init()==-1){
+
+                  return -1;
+                }
             }
         }
     }
@@ -76,6 +80,8 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
 }
 
 int mainClose(){
+
+    TTF_Quit();
 
     SDL_DestroyRenderer(mainRenderer);
     mainRenderer = NULL;
@@ -90,20 +96,16 @@ int mainClose(){
 
 int mainLoop(){
 
-    elemGUI blyat;
-    blyat.active = 1;
-    blyat.type = GUI_IMAGE;
-    blyat.pos.x = 100;
-    blyat.pos.y = 100;
-    blyat.pos.w = 100;
-    blyat.pos.h = 100;
-    blyat.texture = loadTexture("Assets/Button.bmp", mainRenderer);
+    elemGUI blyat = createElement(1, GUI_BUTTON, (SDL_Rect){100, 100, 100, 100}, (SDL_Color){255, 255, 255, 255}, loadTexture("Assets/Button.bmp", mainRenderer), &blyatto);
+    elemGUI blyat2 = createElement(1, GUI_LABEL, (SDL_Rect){0, 0, 200, 100}, (SDL_Color){255, 255, 255, 255}, loadFromText("Matheo Renxy", (SDL_Color){255, 255, 255, 255}, mainRenderer, "Assets/Font/comicz.ttf", 16), &blyatto);
+
 
     while(!breakLoop) {
 
         SDL_RenderClear(mainRenderer);
 
         drawElement(blyat, mainRenderer);
+        drawElement(blyat2, mainRenderer);
 
         SDL_RenderPresent(mainRenderer);
 
@@ -111,10 +113,8 @@ int mainLoop(){
 
             stdEventInput(&breakLoop, e); //No function overloading but at least we got the Chinese version of "pass by reference"
 
-            if(e.type == SDL_MOUSEBUTTONDOWN){
-                int x, y;
-                SDL_GetMouseState(&x, &y);
-            }
+            GUIEventInput(blyat, e);
+
         }
 
         //SDL_framerateDelay(FPSLimiter);
@@ -129,5 +129,13 @@ int mainLoad(){
     SDL_SetRenderDrawColor(mainRenderer, 0x80, 0xFF, 0x80, 0xFF); //Set background color
 
     return 0;
+
+}
+
+int blyatto(){
+
+  fprintf(stdout, "Jiisus\n");
+
+  return 0;
 
 }
