@@ -1,6 +1,7 @@
 build () {
 
 	clear
+	clean
 	
 	# build functions here
 

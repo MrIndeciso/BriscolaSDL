@@ -1,11 +1,10 @@
 #include "Lib/SDL/include/SDL.h"
 #include <stdio.h>
 
-//#include "SDL2_framerate.h"
-
 #include "Modes/Briscola.h"
 #include "Render/RenderUtil.h"
 #include "Render/GUIUtil.h"
+#include "Render/GameUtil.h"
 
 int mainInit();
 int mainLoad();
@@ -15,20 +14,22 @@ int mainClose();
 int loadBackground();
 int loadMainScrBtts();
 
-int blyatto();
-
 const int SCR_WIDTH = 640;
-const int SCR_HEIGHT = 480;
+const int SCR_HEIGHT = 360;
+
+const int SCR_LWIDTH = 800;
+const int SCR_LHEIGHT = 450;
 
 SDL_Window* mainWindow = NULL;
 SDL_Surface* mainScreenSurface = NULL;
 SDL_Renderer* mainRenderer = NULL;
 
-//FPSmanager* FPSLimiter;
-
 SDL_Event e;
 
 int breakLoop = 0;
+
+elemGUI logo, btt1, btt2, btt3;
+Mix_Music *bgMusic = NULL;
 
 int main(int argc, char* args[]){
 
@@ -50,7 +51,7 @@ int main(int argc, char* args[]){
 
 int mainInit(){ //This really makes no sense because with a return the "else" isn't needed but I'll fix it another time
 
-    if(SDL_Init(SDL_INIT_VIDEO)<0) {
+    if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO)<0) {
         printf("%s", errorString[ERR_CANT_LOAD_SDL]);
         return -1;
     } else {
@@ -64,12 +65,17 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
             mainRenderer = SDL_CreateRenderer(mainWindow, -1, SDL_RENDERER_ACCELERATED);
             if(mainRenderer == NULL) {
                 printf("%s", errorString[ERR_INVALID_RENDERER]);
-		printf("\n%s", SDL_GetError());
+		            printf("\n%s", SDL_GetError());
                 return -1;
             } else {
                 if(TTF_Init()==-1){
-
                   return -1;
+                } else {
+                    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8192)<0){
+                      return -1;
+                    } else {
+
+                    }
                 }
             }
         }
@@ -96,16 +102,11 @@ int mainClose(){
 
 int mainLoop(){
 
-    elemGUI blyat = createElement(1, GUI_BUTTON, (SDL_Rect){100, 100, 100, 100}, (SDL_Color){255, 255, 255, 255}, loadTexture("Assets/Button.bmp", mainRenderer), &blyatto);
-    elemGUI blyat2 = createElement(1, GUI_LABEL, (SDL_Rect){0, 0, 200, 100}, (SDL_Color){255, 255, 255, 255}, loadFromText("Matheo Renxy", (SDL_Color){255, 255, 255, 255}, mainRenderer, "Assets/Font/comicz.ttf", 16), &blyatto);
-
-
     while(!breakLoop) {
 
         SDL_RenderClear(mainRenderer);
 
-        drawElement(blyat, mainRenderer);
-        drawElement(blyat2, mainRenderer);
+        renderMM();
 
         SDL_RenderPresent(mainRenderer);
 
@@ -113,11 +114,8 @@ int mainLoop(){
 
             stdEventInput(&breakLoop, e); //No function overloading but at least we got the Chinese version of "pass by reference"
 
-            GUIEventInput(blyat, e);
-
         }
 
-        //SDL_framerateDelay(FPSLimiter);
     }
 
     return 0;
@@ -126,15 +124,59 @@ int mainLoop(){
 
 int mainLoad(){
 
+    SDL_RenderSetLogicalSize(mainRenderer, SCR_LWIDTH, SCR_LHEIGHT);
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+
+    SDL_SetWindowResizable(mainWindow, SDL_TRUE);
+
     SDL_SetRenderDrawColor(mainRenderer, 0x80, 0xFF, 0x80, 0xFF); //Set background color
+
+    loadMMAssets();
 
     return 0;
 
 }
 
-int blyatto(){
+//Here starts the actual main screen stuff
 
-  fprintf(stdout, "Jiisus\n");
+int loadMMAssets(){ //Called in mainLoad
+
+  logo = createElement(1, GUI_IMAGE, (SDL_Rect){300, 50, 200, 79}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/MM/Logo.bmp", mainRenderer), NULL);
+
+  btt1 = createElement(1, GUI_LABEL, (SDL_Rect){350, 180, 100, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Inizia", (SDL_Color){200, 0, 200, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 200), NULL);
+
+  btt2 = createElement(1, GUI_LABEL, (SDL_Rect){350, 260, 100, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Opzioni", (SDL_Color){200, 0, 200, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 200), NULL);
+
+  btt3 = createElement(1, GUI_LABEL, (SDL_Rect){350, 340, 100, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Esci", (SDL_Color){200, 0, 200, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 200), NULL);
+
+  bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
+  Mix_PlayMusic(bgMusic, -1);
+  Mix_VolumeMusic(16);
+
+
+  return 0;
+
+}
+
+int renderMM(){ //Called in mainLoop
+
+  drawElement(logo, mainRenderer);
+
+  drawElement(btt1, mainRenderer);
+
+  drawElement(btt2, mainRenderer);
+
+  drawElement(btt3, mainRenderer);
 
   return 0;
 

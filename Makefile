@@ -13,8 +13,8 @@ COMPILER_FLAGS = -w
 LIBRARY_PATHS = -L Lib/SDL/lib/win32
 
 #LINKER FLAGS specifies the libraries we're linking against
-LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_ttf
-WIN_LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_ttf
+LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_ttf -lSDL2_mixer
+WIN_LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer
 
 #OBJ NAME specifies the name of our executable
 LINUX_OBJ_NAME = Output/Linux/briscola
