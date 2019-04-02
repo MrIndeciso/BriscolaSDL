@@ -34,7 +34,7 @@ SDL_Texture* loadFromText(char* text, SDL_Color textColor, SDL_Renderer* rendere
 int fileExists(char* source);
 
 //Handles standard input like ESCAPE or pressing the X button
-int stdEventInput(int* condition, SDL_Event e);
+int stdEventInput(int* condition, SDL_Event e, SDL_Window* window);
 
 int drawPolygon();
 

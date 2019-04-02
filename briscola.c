@@ -14,8 +14,11 @@ int mainClose();
 int loadBackground();
 int loadMainScrBtts();
 
-const int SCR_WIDTH = 640;
-const int SCR_HEIGHT = 360;
+int loadMMAssets();
+int handleClick(int, int, int);
+
+int SCR_WIDTH = 800;
+int SCR_HEIGHT = 450;
 
 const int SCR_LWIDTH = 800;
 const int SCR_LHEIGHT = 450;
@@ -30,6 +33,8 @@ int breakLoop = 0;
 
 elemGUI logo, btt1, btt2, btt3;
 Mix_Music *bgMusic = NULL;
+
+gGUI globalGUI;
 
 int main(int argc, char* args[]){
 
@@ -55,7 +60,7 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
         printf("%s", errorString[ERR_CANT_LOAD_SDL]);
         return -1;
     } else {
-        mainWindow = SDL_CreateWindow("DEBUG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCR_WIDTH, SCR_HEIGHT, SDL_WINDOW_SHOWN);
+        mainWindow = SDL_CreateWindow("DEBUG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCR_LWIDTH, SCR_LHEIGHT, SDL_WINDOW_SHOWN);
         if(mainWindow == NULL) {
             printf("%s", errorString[ERR_CANT_CREATE_WINDOW]);
             return -1;
@@ -80,6 +85,8 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
             }
         }
     }
+
+    globalGUI.elemCount = 0;
 
     return 0;
 
@@ -106,13 +113,17 @@ int mainLoop(){
 
         SDL_RenderClear(mainRenderer);
 
-        renderMM();
+        drawGUI(globalGUI, mainRenderer);
 
         SDL_RenderPresent(mainRenderer);
 
         while(SDL_PollEvent(&e)!=0){
 
-            stdEventInput(&breakLoop, e); //No function overloading but at least we got the Chinese version of "pass by reference"
+            stdEventInput(&breakLoop, e, mainWindow); //No function overloading but at least we got the Chinese version of "pass by reference"
+
+            gInput(globalGUI, e);
+
+            GUIEventInput(btt1, e);
 
         }
 
@@ -149,34 +160,32 @@ int loadMMAssets(){ //Called in mainLoad
 
   btt1 = createElement(1, GUI_LABEL, (SDL_Rect){350, 180, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Inizia", (SDL_Color){200, 0, 200, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), NULL);
+                        "Assets/Font/comicz.ttf", 200), &handleClick);
 
   btt2 = createElement(1, GUI_LABEL, (SDL_Rect){350, 260, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Opzioni", (SDL_Color){200, 0, 200, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), NULL);
+                        "Assets/Font/comicz.ttf", 200), &handleClick);
 
   btt3 = createElement(1, GUI_LABEL, (SDL_Rect){350, 340, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Esci", (SDL_Color){200, 0, 200, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), NULL);
+                        "Assets/Font/comicz.ttf", 200), &handleClick);
 
   bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
-  Mix_PlayMusic(bgMusic, -1);
+  //Mix_PlayMusic(bgMusic, -1);
   Mix_VolumeMusic(16);
 
+  addElement(&globalGUI, logo);
+  addElement(&globalGUI, btt1);
+  addElement(&globalGUI, btt2);
+  addElement(&globalGUI, btt3);
 
   return 0;
 
 }
 
-int renderMM(){ //Called in mainLoop
+int handleClick(int x, int y, int ptr){
 
-  drawElement(logo, mainRenderer);
-
-  drawElement(btt1, mainRenderer);
-
-  drawElement(btt2, mainRenderer);
-
-  drawElement(btt3, mainRenderer);
+  printf("Iesus %d\n%d\n", x, y);
 
   return 0;
 

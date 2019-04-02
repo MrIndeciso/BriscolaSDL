@@ -4,6 +4,9 @@
 #include <sys/stat.h>
 #include <stdio.h>
 
+extern int SCR_WIDTH;
+extern int SCR_HEIGHT;
+
 char errorString[ERRCOUNT][63] = {"Error: could not load SDL\n\0", "Error: could not create Window\n\0", "Error: could not load image\n\0", "Error: could not convert image\n\0", "Error: file doesn't exist\n\0", "Error: could not create a renderer\n\0", "Error: could not create a texture\n\0"};
 
 SDL_Surface* loadSurface(char* source, SDL_PixelFormat* format){
@@ -94,9 +97,11 @@ int fileExists(char* source){
     return (stat(source, &buffer)==0);
 }
 
-int stdEventInput(int* condition, SDL_Event e){
+int stdEventInput(int* condition, SDL_Event e, SDL_Window* window){
     if(e.type == SDL_QUIT) *condition = 1;
     if(e.type == SDL_KEYDOWN) if(e.key.keysym.sym == SDLK_ESCAPE) *condition = 1; //Beautiful
+
+    if(e.type == SDL_WINDOWEVENT) if(e.window.event ==SDL_WINDOWEVENT_RESIZED) SDL_GetWindowSize(window, &SCR_WIDTH, &SCR_HEIGHT);
 
     return 0;
 }
