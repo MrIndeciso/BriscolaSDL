@@ -87,7 +87,25 @@ SDL_Texture* loadFromText(char* text, SDL_Color textColor, SDL_Renderer* rendere
 
   SDL_FreeSurface(temp);
 
+  TTF_CloseFont(font);
+
   return texture;
+
+}
+
+int getTextSize(char* text, char* fontName, int fontSize, int type){
+
+  TTF_Font* font;
+
+  font = TTF_OpenFont(fontName, fontSize);
+
+  int h, w;
+
+  TTF_SizeText(font, text, &w, &h);
+
+  TTF_CloseFont(font);
+
+  return type?h:w;
 
 }
 

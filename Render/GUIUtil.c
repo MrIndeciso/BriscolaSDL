@@ -60,8 +60,6 @@ elemGUI createElement(int active, int type, SDL_Rect pos, SDL_Color color, SDL_T
   buffer.texture = texture;
   buffer.onClick = onClick;
 
-  printf("\n%d\n%d", onClick, buffer.onClick);
-
   return buffer;
 
 }
@@ -72,15 +70,12 @@ int GUIEventInput(elemGUI element, SDL_Event e){
       int x, y;
       SDL_GetMouseState(&x, &y);
 
-      x = x * SCR_LWIDTH / SCR_WIDTH;
-      y = y * SCR_LHEIGHT / SCR_HEIGHT;
+      x = (int)((float)x * (float)SCR_LWIDTH / (float)SCR_WIDTH);
+      y = (int)((float)y * (float)SCR_LHEIGHT / (float)SCR_HEIGHT);
 
 
       if(x<element.pos.x && x>=(element.pos.x-element.pos.w) && y<element.pos.y && y>=(element.pos.y-element.pos.h))
-        (*element.onClick)(x, y, 3);
-      printf("\n%d\n%d\n%d\n%d\n%d\n%d", x, y, element.pos.x, element.pos.y, element.pos.w, element.pos.h);
-
-      printf("\nShish");
+        (*element.onClick)(x, y, &element);
 
   }
 
@@ -92,8 +87,6 @@ int addElement(gGUI* global, elemGUI element){
 
   global->element[global->elemCount] = element;
   global->elemCount++;
-
-  printf("%d", global->elemCount);
 
   return 0;
 

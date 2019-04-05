@@ -30,6 +30,9 @@ SDL_Texture* loadTexture(char* source, SDL_Renderer* renderer);
 //Returns the pointer to a string converted to texture using a custom font
 SDL_Texture* loadFromText(char* text, SDL_Color textColor, SDL_Renderer* renderer, char* fontName, int fontSize);
 
+//Returns the pixel size of a certain string. Type = 0 equals w, type = 1 equals h
+int getTextSize(char* text, char* fontName, int fontSize, int type);
+
 //Self-documenting
 int fileExists(char* source);
 

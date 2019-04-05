@@ -5,6 +5,7 @@
 #include "Render/RenderUtil.h"
 #include "Render/GUIUtil.h"
 #include "Render/GameUtil.h"
+#include "Render/FPSUtil.h"
 
 int mainInit();
 int mainLoad();
@@ -17,15 +18,19 @@ int loadMainScrBtts();
 int loadMMAssets();
 int handleClick(int, int, int);
 
+//The resolution that we render with
 int SCR_WIDTH = 800;
 int SCR_HEIGHT = 450;
 
+//The initial game resolution
 const int SCR_LWIDTH = 800;
 const int SCR_LHEIGHT = 450;
 
 SDL_Window* mainWindow = NULL;
 SDL_Surface* mainScreenSurface = NULL;
 SDL_Renderer* mainRenderer = NULL;
+
+FPSCounter fpsDraw;
 
 SDL_Event e;
 
@@ -86,6 +91,9 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
         }
     }
 
+    //We use the timer to calculate the FPS obviously
+    initFPS(&fpsDraw, mainRenderer, 1, FPSTR);
+
     globalGUI.elemCount = 0;
 
     return 0;
@@ -114,6 +122,7 @@ int mainLoop(){
         SDL_RenderClear(mainRenderer);
 
         drawGUI(globalGUI, mainRenderer);
+        drawFPS(&fpsDraw, SDL_GetTicks());
 
         SDL_RenderPresent(mainRenderer);
 
@@ -137,6 +146,7 @@ int mainLoad(){
 
     SDL_RenderSetLogicalSize(mainRenderer, SCR_LWIDTH, SCR_LHEIGHT);
 
+    //This is probably wrong
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
@@ -184,8 +194,6 @@ int loadMMAssets(){ //Called in mainLoad
 }
 
 int handleClick(int x, int y, int ptr){
-
-  printf("Iesus %d\n%d\n", x, y);
 
   return 0;
 
