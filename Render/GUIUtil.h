@@ -28,7 +28,7 @@ typedef struct elemGUI {
     SDL_Rect pos;
     SDL_Color color;
     SDL_Texture *texture;
-    int (*onClick)(int, int, int);
+    int (*onClick)(int, int, Uint32);
 } elemGUI;
 
 typedef struct gGUI {
@@ -43,7 +43,7 @@ int drawElement(elemGUI element, SDL_Renderer* mainRenderer);
 int GUIEventInput(elemGUI element, SDL_Event e);
 
 //Creates a new element
-elemGUI createElement(int active, int type, SDL_Rect pos, SDL_Color color, SDL_Texture* texture, int (*onClick)(int, int, int));
+elemGUI createElement(int active, int type, SDL_Rect pos, SDL_Color color, SDL_Texture* texture, int (*onClick)(int, int, Uint32));
 
 //Adds an element to the global GUI structure
 int addElement(gGUI* global, elemGUI element);

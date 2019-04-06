@@ -16,15 +16,15 @@ int loadBackground();
 int loadMainScrBtts();
 
 int loadMMAssets();
-int handleClick(int, int, int);
+int handleClick(int, int, Uint32);
 
 //The resolution that we render with
 int SCR_WIDTH = 800;
 int SCR_HEIGHT = 450;
 
 //The initial game resolution
-const int SCR_LWIDTH = 800;
-const int SCR_LHEIGHT = 450;
+int SCR_LWIDTH = 800;
+int SCR_LHEIGHT = 450;
 
 SDL_Window* mainWindow = NULL;
 SDL_Surface* mainScreenSurface = NULL;
@@ -132,8 +132,6 @@ int mainLoop(){
 
             gInput(globalGUI, e);
 
-            GUIEventInput(btt1, e);
-
         }
 
     }
@@ -165,23 +163,23 @@ int mainLoad(){
 
 int loadMMAssets(){ //Called in mainLoad
 
-  logo = createElement(1, GUI_IMAGE, (SDL_Rect){300, 50, 200, 79}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/MM/Logo.bmp", mainRenderer), NULL);
+  logo = createElement(1, GUI_IMAGE, (SDL_Rect){300, 50, 200, 80}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/MM/Logo.bmp", mainRenderer), &handleClick);
 
   btt1 = createElement(1, GUI_LABEL, (SDL_Rect){350, 180, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Inizia", (SDL_Color){200, 0, 200, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 200), &handleClick);
 
   btt2 = createElement(1, GUI_LABEL, (SDL_Rect){350, 260, 100, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Opzioni", (SDL_Color){200, 0, 200, 0}, mainRenderer,
+                        loadFromText("Opzioni", (SDL_Color){0, 200, 200, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 200), &handleClick);
 
   btt3 = createElement(1, GUI_LABEL, (SDL_Rect){350, 340, 100, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Esci", (SDL_Color){200, 0, 200, 0}, mainRenderer,
+                        loadFromText("Esci", (SDL_Color){200, 200, 0, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 200), &handleClick);
 
   bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
-  //Mix_PlayMusic(bgMusic, -1);
+  Mix_PlayMusic(bgMusic, -1);
   Mix_VolumeMusic(16);
 
   addElement(&globalGUI, logo);
@@ -193,7 +191,11 @@ int loadMMAssets(){ //Called in mainLoad
 
 }
 
-int handleClick(int x, int y, int ptr){
+int handleClick(int x, int y, Uint32 ptr){
+
+  //elemGUI *shish = ptr;
+
+  printf("Geesus\n");
 
   return 0;
 

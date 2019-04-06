@@ -4,6 +4,8 @@
 
 extern int SCR_WIDTH;
 extern int SCR_HEIGHT;
+extern int SCR_LWIDTH;
+extern int SCR_LHEIGHT;
 
 int initFPS(FPSCounter* fps, SDL_Renderer* render, int text, int pos){
 
@@ -14,10 +16,10 @@ int initFPS(FPSCounter* fps, SDL_Renderer* render, int text, int pos){
   fps->fpsNum = 0;
 
   int i;
-  char c[5];
+  char c[10][2] = {"0\0", "1\0", "2\0", "3\0", "4\0", "5\0", "6\0", "7\0", "8\0", "9\0"};
+
   for(i=0;i<10;i++){
-    snprintf(&c, 2, "%d\0", i);
-    fps->nums[i] = loadFromText(c, (SDL_Color){255, 255, 0, 255}, render, "Assets/Font/joystix_monospace.ttf", 32);
+    fps->nums[i] = loadFromText(c[i], (SDL_Color){255, 255, 0, 255}, render, "Assets/Font/joystix_monospace.ttf", 32);
   }
 
   fps->text = loadFromText("FPS: ", (SDL_Color){255, 255, 0, 255}, render, "Assets/Font/joystix_monospace.ttf", 32);
@@ -54,8 +56,8 @@ int drawFPS(FPSCounter* fps, Uint32 ticks){
 
   }
 
-  blyat.x -= 4*size;
-  blyat.w =  4*size;
+  blyat.x -= 5*size;
+  blyat.w =  5*size;
 
   SDL_RenderCopy(fps->renderer, fps->text, NULL, &blyat);
 

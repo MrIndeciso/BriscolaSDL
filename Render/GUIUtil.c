@@ -49,7 +49,7 @@ int drawElement(elemGUI element, SDL_Renderer *mainRenderer){
 
 }
 
-elemGUI createElement(int active, int type, SDL_Rect pos, SDL_Color color, SDL_Texture *texture, int (*onClick)(int, int, int)){
+elemGUI createElement(int active, int type, SDL_Rect pos, SDL_Color color, SDL_Texture *texture, int (*onClick)(int, int, Uint32)){
 
   elemGUI buffer;
 
@@ -70,12 +70,12 @@ int GUIEventInput(elemGUI element, SDL_Event e){
       int x, y;
       SDL_GetMouseState(&x, &y);
 
-      x = (int)((float)x * (float)SCR_LWIDTH / (float)SCR_WIDTH);
-      y = (int)((float)y * (float)SCR_LHEIGHT / (float)SCR_HEIGHT);
+      x = (int)((float)x * (float)SCR_WIDTH / (float)SCR_LWIDTH);
+      y = (int)((float)y * (float)SCR_HEIGHT / (float)SCR_LHEIGHT);
 
 
-      if(x<element.pos.x && x>=(element.pos.x-element.pos.w) && y<element.pos.y && y>=(element.pos.y-element.pos.h))
-        (*element.onClick)(x, y, &element);
+      if(x>element.pos.x && x<=(element.pos.x+element.pos.w) && y>element.pos.y && y<=(element.pos.y+element.pos.h))
+        (*element.onClick)(x, y, (Uint32)&element);
 
   }
 

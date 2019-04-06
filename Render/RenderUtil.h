@@ -7,6 +7,8 @@
 //typedef enum errorCodes;
 //No actually the compiler says that it's useless
 
+
+
 enum errorCodes {
     ERR_CANT_LOAD_SDL,
     ERR_CANT_CREATE_WINDOW,
