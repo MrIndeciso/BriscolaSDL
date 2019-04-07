@@ -83,9 +83,10 @@ int GUIEventInput(elemGUI element, SDL_Event e){
 
 }
 
-int addElement(gGUI* global, elemGUI element){
+int addElement(gGUI* global, elemGUI* element){
 
   global->element[global->elemCount] = element;
+
   global->elemCount++;
 
   return 0;
@@ -97,7 +98,7 @@ int drawGUI(gGUI global, SDL_Renderer* mainRenderer){
   int i;
 
   for(i=0;i<global.elemCount;i++){
-    drawElement(global.element[i], mainRenderer);
+    drawElement(*global.element[i], mainRenderer);
   }
 
   return 0;
@@ -109,7 +110,7 @@ int gInput(gGUI global, SDL_Event e){
   int i;
 
   for(i=0;i<global.elemCount;i++){
-    GUIEventInput(global.element[i], e);
+    if(global.element[i]->active) GUIEventInput(*global.element[i], e);
   }
 
   return 0;

@@ -1,4 +1,7 @@
 #include "Lib/SDL/include/SDL.h"
+#include "Lib/SDL/include/SDL_mixer.h"
+#include "Lib/SDL/include/SDL_ttf.h"
+#include "Lib/SDL/include/SDL_net.h"
 #include <stdio.h>
 
 #include "Modes/Briscola.h"
@@ -17,6 +20,10 @@ int loadMainScrBtts();
 
 int loadMMAssets();
 int handleClick(int, int, Uint32);
+int quitGame(int, int, Uint32);
+int volPlus(int, int, Uint32);
+int volMinus(int, int, Uint32);
+int muteAudio(int, int, Uint32);
 
 //The resolution that we render with
 int SCR_WIDTH = 800;
@@ -36,7 +43,7 @@ SDL_Event e;
 
 int breakLoop = 0;
 
-elemGUI logo, btt1, btt2, btt3;
+elemGUI logo, btt1, btt2, btt3, volup, voldw, volmut, volmut2;
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
@@ -94,6 +101,8 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
     //We use the timer to calculate the FPS obviously
     initFPS(&fpsDraw, mainRenderer, 1, FPSTR);
 
+    SDLNet_Init();
+
     globalGUI.elemCount = 0;
 
     return 0;
@@ -102,7 +111,15 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
 
 int mainClose(){
 
+    breakLoop = 1;
+
     TTF_Quit();
+
+    Mix_CloseAudio();
+
+    Mix_Quit();
+
+    SDLNet_Quit();
 
     SDL_DestroyRenderer(mainRenderer);
     mainRenderer = NULL;
@@ -176,16 +193,32 @@ int loadMMAssets(){ //Called in mainLoad
 
   btt3 = createElement(1, GUI_LABEL, (SDL_Rect){350, 340, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Esci", (SDL_Color){200, 200, 0, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), &handleClick);
+                        "Assets/Font/comicz.ttf", 200), &quitGame);
+
+  volmut = createElement(0, GUI_IMAGE, (SDL_Rect){780, 430, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/music.bmp", mainRenderer), &muteAudio);
+
+  volmut2 = createElement(1, GUI_IMAGE, (SDL_Rect){720, 430, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/mute.bmp", mainRenderer), &muteAudio);
+
+  volup = createElement(1, GUI_IMAGE, (SDL_Rect){760, 430, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/high.bmp", mainRenderer), &volPlus);
+
+  voldw = createElement(1, GUI_IMAGE, (SDL_Rect){740, 430, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinus);
 
   bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
   Mix_PlayMusic(bgMusic, -1);
   Mix_VolumeMusic(16);
 
-  addElement(&globalGUI, logo);
-  addElement(&globalGUI, btt1);
-  addElement(&globalGUI, btt2);
-  addElement(&globalGUI, btt3);
+  addElement(&globalGUI, &logo);
+  addElement(&globalGUI, &btt1);
+  addElement(&globalGUI, &btt2);
+  addElement(&globalGUI, &btt3);
+  addElement(&globalGUI, &volup);
+  addElement(&globalGUI, &voldw);
+  addElement(&globalGUI, &volmut);
+  addElement(&globalGUI, &volmut2);
 
   return 0;
 
@@ -199,4 +232,16 @@ int handleClick(int x, int y, Uint32 ptr){
 
   return 0;
 
+}
+
+int quitGame(int x, int y, Uint32 ptr) {mainClose();}
+
+int volPlus(int x, int y, Uint32 ptr) {Mix_VolumeMusic(Mix_VolumeMusic(-1) + 2);}
+
+int volMinus(int x, int y, Uint32 ptr) {Mix_VolumeMusic(Mix_VolumeMusic(-1) - 2);}
+
+int muteAudio(int x, int y, Uint32 ptr) {
+  Mix_PausedMusic()?Mix_ResumeMusic():Mix_PauseMusic();
+  volmut.active = Mix_PausedMusic();
+  volmut2.active = !Mix_PausedMusic();
 }
