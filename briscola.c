@@ -48,6 +48,14 @@ Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
 
+enum Modes {
+	MODE_MENU,
+	MODE_BRISCOLA,
+	MODECOUNT
+};
+
+int currentMode = MODE_MENU;
+
 int main(int argc, char* args[]){
 
     if(!mainInit()){ //Main program starts here
@@ -138,8 +146,20 @@ int mainLoop(){
 
         SDL_RenderClear(mainRenderer);
 
-        drawGUI(globalGUI, mainRenderer);
-        drawFPS(&fpsDraw, SDL_GetTicks());
+		switch(currentMode){
+		
+			case MODE_MENU:
+				drawGUI(globalGUI, mainRenderer);
+        		drawFPS(&fpsDraw, SDL_GetTicks());
+        		break;
+        	
+        	case MODE_BRISCOLA:
+        		break;
+        		
+        	default:
+        		printf("You shouldn't be here");
+        		break;
+        }
 
         SDL_RenderPresent(mainRenderer);
 
@@ -185,7 +205,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   btt1 = createElement(1, GUI_LABEL, (SDL_Rect){350, 180, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Inizia", (SDL_Color){200, 0, 200, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), &handleClick);
+                        "Assets/Font/comicz.ttf", 200), &mainModeBriscola);
 
   btt2 = createElement(1, GUI_LABEL, (SDL_Rect){350, 260, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Opzioni", (SDL_Color){0, 200, 200, 0}, mainRenderer,
