@@ -129,13 +129,13 @@ int stdEventInput(int* condition, SDL_Event e, SDL_Window* window){
 int SDL_GetTruePos(int *xm, int *ym){
 
 	int x, y, truex, truey;
-	
+
 	SDL_GetMouseState(&x, &y);
-	
+
 	float aR, taR;
-	
+
 	aR = (float)SCR_WIDTH / (float)SCR_HEIGHT;
-	taR = (float)SCR_LWIDTH / (float)SCR_LHEIGHT;	
+	taR = (float)SCR_LWIDTH / (float)SCR_LHEIGHT;
 
 	if(aR>=taR){
 		truex = SCR_LWIDTH;
@@ -143,11 +143,11 @@ int SDL_GetTruePos(int *xm, int *ym){
 	} else {
 		truey = SCR_LHEIGHT;
 		truex = (int)((float)SCR_LHEIGHT * aR);
-	} 
-	
-	*xm = (int)((float)x * (float)SCR_WIDTH / (float)truex) - (SCR_LWIDTH - truex)/2;
-	*ym = (int)((float)y * (float)SCR_HEIGHT / (float)truey) - (SCR_LHEIGHT - truey)/2;
-	
+	}
+
+	*xm = (int)((float)(x - (SCR_LWIDTH - truex)/2) * (float)SCR_WIDTH / (float)truex);
+	*ym = (int)((float)(y - (SCR_LHEIGHT - truey)/2) * (float)SCR_HEIGHT / (float)truey);
+
 	return 0;
 
 }
