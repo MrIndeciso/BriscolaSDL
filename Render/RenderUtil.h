@@ -8,7 +8,6 @@
 //No actually the compiler says that it's useless
 
 
-
 enum errorCodes {
     ERR_CANT_LOAD_SDL,
     ERR_CANT_CREATE_WINDOW,
@@ -41,6 +40,7 @@ int fileExists(char* source);
 //Handles standard input like ESCAPE or pressing the X button
 int stdEventInput(int* condition, SDL_Event e, SDL_Window* window);
 
-int drawPolygon();
+//Returns the mouse position corrected for aspect ratio and window size
+int SDL_GetTruePos(int *xm, int *ym);
 
 #endif // RENDERUTIL_H_INCLUDED

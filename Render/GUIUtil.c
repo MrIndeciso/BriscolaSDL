@@ -1,4 +1,5 @@
 #include "GUIUtil.h"
+#include "RenderUtil.h"
 #include "../Lib/SDL/include/SDL_ttf.h"
 
 extern int SCR_WIDTH;
@@ -68,11 +69,13 @@ int GUIEventInput(elemGUI element, SDL_Event e){
 
   if(e.type == SDL_MOUSEBUTTONDOWN){
       int x, y;
+      /*
       SDL_GetMouseState(&x, &y);
 
       x = (int)((float)x * (float)SCR_WIDTH / (float)SCR_LWIDTH);
-      y = (int)((float)y * (float)SCR_HEIGHT / (float)SCR_LHEIGHT);
-
+      y = (int)((float)y * (float)SCR_HEIGHT / (float)SCR_LHEIGHT); */
+		
+	  SDL_GetTruePos(&x, &y);
 
       if(x>element.pos.x && x<=(element.pos.x+element.pos.w) && y>element.pos.y && y<=(element.pos.y+element.pos.h))
         (*element.onClick)(x, y, (Uint32)&element);

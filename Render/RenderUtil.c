@@ -6,6 +6,8 @@
 
 extern int SCR_LWIDTH;
 extern int SCR_LHEIGHT;
+extern int SCR_WIDTH;
+extern int SCR_HEIGHT;
 
 char errorString[ERRCOUNT][63] = {"Error: could not load SDL\n\0", "Error: could not create Window\n\0", "Error: could not load image\n\0", "Error: could not convert image\n\0", "Error: file doesn't exist\n\0", "Error: could not create a renderer\n\0", "Error: could not create a texture\n\0"};
 
@@ -124,7 +126,28 @@ int stdEventInput(int* condition, SDL_Event e, SDL_Window* window){
     return 0;
 }
 
-int drawPolygon(){
+int SDL_GetTruePos(int *xm, int *ym){
 
-    return 0;
+	int x, y, truex, truey;
+	
+	SDL_GetMouseState(&x, &y);
+	
+	float aR, taR;
+	
+	aR = (float)SCR_WIDTH / (float)SCR_HEIGHT;
+	taR = (float)SCR_LWIDTH / (float)SCR_LHEIGHT;	
+
+	if(aR>=taR){
+		truex = SCR_LWIDTH;
+		truey = (int)((float)SCR_LWIDTH / aR);
+	} else {
+		truey = SCR_LHEIGHT;
+		truex = (int)((float)SCR_LHEIGHT * aR);
+	} 
+	
+	*xm = (int)((float)x * (float)SCR_WIDTH / (float)truex) - (SCR_LWIDTH - truex)/2;
+	*ym = (int)((float)y * (float)SCR_HEIGHT / (float)truey) - (SCR_LHEIGHT - truey)/2;
+	
+	return 0;
+
 }
