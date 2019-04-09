@@ -23,6 +23,7 @@ typedef struct FPSCounter {
     int fpsNum;
 } FPSCounter;
 
+//Not fully implemented but it's ok
 int initFPS(FPSCounter* fps, SDL_Renderer* render, int text, int pos);
 
 int drawFPS(FPSCounter* fps, Uint32 ticks);

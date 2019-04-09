@@ -24,6 +24,7 @@ int quitGame(int, int, Uint32);
 int volPlus(int, int, Uint32);
 int volMinus(int, int, Uint32);
 int muteAudio(int, int, Uint32);
+int startBriscola(int, int, Uint32);
 
 //The resolution that we render with
 int SCR_WIDTH = 800;
@@ -47,14 +48,6 @@ elemGUI logo, btt1, btt2, btt3, volup, voldw, volmut, volmut2;
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
-
-enum Modes {
-	MODE_MENU,
-	MODE_BRISCOLA,
-	MODECOUNT
-};
-
-int currentMode = MODE_MENU;
 
 int main(int argc, char* args[]){
 
@@ -146,20 +139,8 @@ int mainLoop(){
 
         SDL_RenderClear(mainRenderer);
 
-		switch(currentMode){
-		
-			case MODE_MENU:
 				drawGUI(globalGUI, mainRenderer);
-        		drawFPS(&fpsDraw, SDL_GetTicks());
-        		break;
-        	
-        	case MODE_BRISCOLA:
-        		break;
-        		
-        	default:
-        		printf("You shouldn't be here");
-        		break;
-        }
+        drawFPS(&fpsDraw, SDL_GetTicks());
 
         SDL_RenderPresent(mainRenderer);
 
@@ -205,7 +186,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   btt1 = createElement(1, GUI_LABEL, (SDL_Rect){350, 180, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Inizia", (SDL_Color){200, 0, 200, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), &mainModeBriscola);
+                        "Assets/Font/comicz.ttf", 200), &startBriscola);
 
   btt2 = createElement(1, GUI_LABEL, (SDL_Rect){350, 260, 100, 40}, (SDL_Color){0,0,0,0},
                         loadFromText("Opzioni", (SDL_Color){0, 200, 200, 0}, mainRenderer,
@@ -229,7 +210,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
   Mix_PlayMusic(bgMusic, -1);
-  Mix_VolumeMusic(16);
+  Mix_VolumeMusic(0);
 
   addElement(&globalGUI, &logo);
   addElement(&globalGUI, &btt1);
@@ -264,4 +245,9 @@ int muteAudio(int x, int y, Uint32 ptr) {
   Mix_PausedMusic()?Mix_ResumeMusic():Mix_PauseMusic();
   volmut.active = Mix_PausedMusic();
   volmut2.active = !Mix_PausedMusic();
+}
+
+int startBriscola(int x, int y, Uint32 ptr){
+	breakLoop = 1;
+	initBriscola();
 }

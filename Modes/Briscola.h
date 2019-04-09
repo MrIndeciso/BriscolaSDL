@@ -3,6 +3,15 @@
 
 #include "../Lib/SDL/include/SDL.h"
 
-int mainModeBriscola(int x, int y, Uint32 ptr);
+int initBriscola();
+
+int mainBriscolaLoop();
+
+//Music stuff starts here
+int loadMusicElements();
+int volPlusB(int x, int y, Uint32 ptr);
+int volMinusB(int x, int y, Uint32 ptr);
+int muteAudioB(int x, int y, Uint32 ptr);
+//Music stuff luckily ends here
 
 #endif // BRISCOLA_H_INCLUDED
