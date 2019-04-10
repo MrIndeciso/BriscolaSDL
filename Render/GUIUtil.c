@@ -27,17 +27,8 @@ int drawElement(elemGUI element, SDL_Renderer *mainRenderer){
       SDL_RenderCopy(mainRenderer, element.texture, NULL, &element.pos);
       break;
 
-    case GUI_TEXTBOX:
-      break;
-
-    case GUI_MESSAGE:
-      break;
-
     case GUI_IMAGE:
       SDL_RenderCopy(mainRenderer, element.texture, NULL, &element.pos);
-      break;
-
-    case GUI_POLY:
       break;
 
     default:
@@ -74,7 +65,7 @@ int GUIEventInput(elemGUI element, SDL_Event e){
 
       x = (int)((float)x * (float)SCR_WIDTH / (float)SCR_LWIDTH);
       y = (int)((float)y * (float)SCR_HEIGHT / (float)SCR_LHEIGHT); */
-		
+
 	  SDL_GetTruePos(&x, &y);
 
       if(x>element.pos.x && x<=(element.pos.x+element.pos.w) && y>element.pos.y && y<=(element.pos.y+element.pos.h))

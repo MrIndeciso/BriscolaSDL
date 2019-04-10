@@ -7,12 +7,16 @@
 #include "../Render/NetUtil.h"
 #include <stdio.h>
 
+//They have to be the same from the main loop
 extern SDL_Renderer *mainRenderer;
 extern SDL_Window* mainWindow;
 
+//Just SDL stuff
 SDL_Event e;
 
+
 int briscolaLoop = 0;
+int playingPlayer = 0;
 
 FPSCounter fpsCtr;
 
@@ -20,12 +24,30 @@ Mazzo jiisus;
 
 gGUI briscolaGUI;
 
+gGUI cards;
+
+enum currentState {
+	P1WON,
+	P2WON,
+	START,
+	END
+};
+
+Player pls[2];
+Player pl1, pl2;
+
+//Music stuff
+elemGUI volupb, voldwb, volmutb, volmut2b;
+
+//That thing with a 6 line comment stuff
+elemGUI txcard1, txcard2, txcard3;
+
 int initBriscola(){
 
-	initMazzo(&jiisus, mainRenderer);
+	pls[0] = pl1;
+	pls[1] = pl2;
 
-	int shish;
-	for(shish=0;shish<40;shish++) printf("\n%d", jiisus.carte[shish].num);
+	initMazzo(&jiisus, mainRenderer);
 
 	initFPS(&fpsCtr, mainRenderer, 1, FPSTR);
 
@@ -35,6 +57,13 @@ int initBriscola(){
 
 	loadMusicElements();
 
+	instaGUIelem();
+
+	giveFirstCards();
+
+	pls[0] = pl1;
+	pls[1] = pl2;
+
 	mainBriscolaLoop();
 
 	return 0;
@@ -42,7 +71,6 @@ int initBriscola(){
 }
 
 //Music stuff starts here
-elemGUI volupb, voldwb, volmutb, volmut2b;
 int loadMusicElements(){
 	volmutb = createElement(0, GUI_IMAGE, (SDL_Rect){780, 430, 20, 20}, (SDL_Color){0,0,0,0},
 												loadTexture("Assets/Sound/music.bmp", mainRenderer), &muteAudioB);
@@ -82,11 +110,18 @@ int mainBriscolaLoop(){
 		drawFPS(&fpsCtr, SDL_GetTicks());
 		drawGUI(briscolaGUI, mainRenderer);
 
+		//drawGUI(cards, mainRenderer);
+		drawPLCards();
+
+		drawHand();
+
 		SDL_RenderPresent(mainRenderer);
 
 		while(SDL_PollEvent(&e)!=0){
 
 				stdEventInput(&briscolaLoop, e, mainWindow); //No function overloading but at least we got the Chinese version of "pass by reference"
+
+				gInput(briscolaGUI, e);
 
 		}
 
@@ -95,3 +130,73 @@ int mainBriscolaLoop(){
 	return 0;
 
 }
+
+int giveFirstCards(){
+
+	int i;
+	for(i=5;i>0;i-=2){
+		pl1.mano[i/2] = jiisus.carte[i];
+		pl2.mano[i/2] = jiisus.carte[i-1];
+	} //Gurini triggered PT2
+
+	return 0;
+
+}
+
+int drawHand(){
+
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &jiisus.mazzoGirato, &(SDL_Rect){310, -66, 60, 132});
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &jiisus.mazzoGirato, &(SDL_Rect){370, -66, 60, 132});
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &jiisus.mazzoGirato, &(SDL_Rect){430, -66, 60, 132});
+
+	SDL_RenderCopyEx(mainRenderer, jiisus.texture, &jiisus.briscola.pos, &(SDL_Rect){60, 130, 100, 190}, 90, NULL, SDL_FLIP_NONE);
+
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &jiisus.mazzoGirato, &(SDL_Rect){10, 130, 100, 190});
+
+	return 0;
+
+}
+
+//Here starts the real business
+
+int instaGUIelem(){
+		/* Principle of operation:
+		Runs every time something happens that changes cards or player
+		Manages 3 elements
+		Basically a second GUI renderer just draws these 3 elements
+		The elements have to change every time
+		It's not hard but I still wanted to write a comment for this */
+
+		cards.elemCount = 0;
+
+		txcard1 = createElement(1, GUI_IMAGE, (SDL_Rect){250, 300, 100, 220}, (SDL_Color){0,0,0,0},
+														jiisus.texture, &clickCard1);
+		txcard2 = createElement(1, GUI_IMAGE, (SDL_Rect){350, 300, 100, 220}, (SDL_Color){0,0,0,0},
+														jiisus.texture, &clickCard2);
+		txcard3 = createElement(1, GUI_IMAGE, (SDL_Rect){450, 300, 100, 220}, (SDL_Color){0,0,0,0},
+														jiisus.texture, &clickCard3);
+
+		addElement(&cards, &txcard1);
+		addElement(&cards, &txcard2);
+		addElement(&cards, &txcard3);
+
+		return 0;
+
+}
+
+int drawPLCards(){
+
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer].mano[0].pos, &(SDL_Rect){250, 300, 100, 220});
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer].mano[1].pos, &(SDL_Rect){350, 300, 100, 220});
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer].mano[2].pos, &(SDL_Rect){450, 300, 100, 220});
+
+	return 0;
+
+}
+
+int clickCard1(int x, int y, int ptr){}
+int clickCard2(int x, int y, int ptr){}
+int clickCard3(int x, int y, int ptr){}
+
+//Dont delete, very important, program breaks and I don't know why (cit.)
+int doNothing(int x, int y, Uint32 ptr) {return 0;}

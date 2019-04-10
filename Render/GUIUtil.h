@@ -7,10 +7,7 @@
 enum elementTypes {
     GUI_BUTTON,
     GUI_LABEL,
-    GUI_TEXTBOX,
-    GUI_MESSAGE,
     GUI_IMAGE,
-    GUI_POLY,
     GUICOUNT
 };
 

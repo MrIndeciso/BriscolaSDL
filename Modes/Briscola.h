@@ -14,4 +14,17 @@ int volMinusB(int x, int y, Uint32 ptr);
 int muteAudioB(int x, int y, Uint32 ptr);
 //Music stuff luckily ends here
 
+int clickCard1(int x, int y, int ptr);
+int clickCard2(int x, int y, int ptr);
+int clickCard3(int x, int y, int ptr);
+
+int doNothing(int x, int y, Uint32 ptr);
+
+int drawPLCards();
+
+int instaGUIelem();
+int drawHand();
+
+int giveFirstCards();
+
 #endif // BRISCOLA_H_INCLUDED
