@@ -22,6 +22,8 @@ FPSCounter fpsCtr;
 
 Mazzo jiisus;
 
+Carta banco[2];
+
 gGUI briscolaGUI;
 
 gGUI cards;
@@ -33,8 +35,8 @@ enum currentState {
 	END
 };
 
-Player pls[2];
 Player pl1, pl2;
+Player *pls[2] = {&pl1, &pl2}; //Used almost everywhere
 
 //Music stuff
 elemGUI volupb, voldwb, volmutb, volmut2b;
@@ -42,10 +44,10 @@ elemGUI volupb, voldwb, volmutb, volmut2b;
 //That thing with a 6 line comment stuff
 elemGUI txcard1, txcard2, txcard3;
 
-int initBriscola(){
+//Button to confirm the choice
+elemGUI confirmBtt;
 
-	pls[0] = pl1;
-	pls[1] = pl2;
+int initBriscola(){
 
 	initMazzo(&jiisus, mainRenderer);
 
@@ -59,10 +61,9 @@ int initBriscola(){
 
 	instaGUIelem();
 
-	giveFirstCards();
+	otherElements();
 
-	pls[0] = pl1;
-	pls[1] = pl2;
+	giveFirstCards();
 
 	mainBriscolaLoop();
 
@@ -123,6 +124,8 @@ int mainBriscolaLoop(){
 
 				gInput(briscolaGUI, e);
 
+				gInput(cards, e);
+
 		}
 
 	}
@@ -167,36 +170,53 @@ int instaGUIelem(){
 		The elements have to change every time
 		It's not hard but I still wanted to write a comment for this */
 
-		cards.elemCount = 0;
+	cards.elemCount = 0;
 
-		txcard1 = createElement(1, GUI_IMAGE, (SDL_Rect){250, 300, 100, 220}, (SDL_Color){0,0,0,0},
-														jiisus.texture, &clickCard1);
-		txcard2 = createElement(1, GUI_IMAGE, (SDL_Rect){350, 300, 100, 220}, (SDL_Color){0,0,0,0},
-														jiisus.texture, &clickCard2);
-		txcard3 = createElement(1, GUI_IMAGE, (SDL_Rect){450, 300, 100, 220}, (SDL_Color){0,0,0,0},
-														jiisus.texture, &clickCard3);
+	txcard1 = createElement(1, GUI_IMAGE, (SDL_Rect){250, 300, 100, 220}, (SDL_Color){0,0,0,0},
+													jiisus.texture, &clickCard1);
+	txcard2 = createElement(1, GUI_IMAGE, (SDL_Rect){350, 300, 100, 220}, (SDL_Color){0,0,0,0},
+													jiisus.texture, &clickCard2);
+	txcard3 = createElement(1, GUI_IMAGE, (SDL_Rect){450, 300, 100, 220}, (SDL_Color){0,0,0,0},
+													jiisus.texture, &clickCard3);
 
-		addElement(&cards, &txcard1);
-		addElement(&cards, &txcard2);
-		addElement(&cards, &txcard3);
-
-		return 0;
-
-}
-
-int drawPLCards(){
-
-	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer].mano[0].pos, &(SDL_Rect){250, 300, 100, 220});
-	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer].mano[1].pos, &(SDL_Rect){350, 300, 100, 220});
-	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer].mano[2].pos, &(SDL_Rect){450, 300, 100, 220});
+	addElement(&cards, &txcard1);
+	addElement(&cards, &txcard2);
+	addElement(&cards, &txcard3);
 
 	return 0;
 
 }
 
-int clickCard1(int x, int y, int ptr){}
-int clickCard2(int x, int y, int ptr){}
-int clickCard3(int x, int y, int ptr){}
+int otherElements(){
+	confirmBtt = createElement(1, GUI_LABEL, (SDL_Rect){625, 320, 100, 40}, (SDL_Color){0,0,0,0},
+														loadFromText("Confirm", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+														"Assets/Font/comicz.ttf", 200), &confirmCard);
+
+	addElement(&briscolaGUI, &confirmBtt);
+
+}
+
+int drawPLCards(){
+
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[0].pos, &(SDL_Rect){250, 300, 100, 220});
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[1].pos, &(SDL_Rect){350, 300, 100, 220});
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[2].pos, &(SDL_Rect){450, 300, 100, 220});
+
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &banco[0].pos, &(SDL_Rect){310, 80, 80, 180});
+
+	SDL_RenderCopy(mainRenderer, jiisus.texture, &banco[1].pos, &(SDL_Rect){410, 80, 80, 180});
+
+	return 0;
+
+}
+
+int clickCard1(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[0]; }
+int clickCard2(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[1]; }
+int clickCard3(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[2]; }
+
+int confirmCard(int x, int y, int ptr){
+
+}
 
 //Dont delete, very important, program breaks and I don't know why (cit.)
 int doNothing(int x, int y, Uint32 ptr) {return 0;}
