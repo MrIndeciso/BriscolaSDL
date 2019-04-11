@@ -47,3 +47,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# macOS's useless shit (probably won't work but you never know)
+.DS_Store
