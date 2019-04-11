@@ -37,6 +37,7 @@ int SCR_LHEIGHT = 450;
 SDL_Window* mainWindow = NULL;
 SDL_Surface* mainScreenSurface = NULL;
 SDL_Renderer* mainRenderer = NULL;
+SDL_Texture* bgTexture;
 
 FPSCounter fpsDraw;
 
@@ -99,6 +100,8 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
         }
     }
 
+
+
     //We use the timer to calculate the FPS obviously
     initFPS(&fpsDraw, mainRenderer, 1, FPSTR);
 
@@ -139,8 +142,10 @@ int mainLoop(){
 
         SDL_RenderClear(mainRenderer);
 
+        SDL_RenderCopy(mainRenderer, bgTexture, NULL, NULL);
 				drawGUI(globalGUI, mainRenderer);
         drawFPS(&fpsDraw, SDL_GetTicks());
+
 
         SDL_RenderPresent(mainRenderer);
 
@@ -169,7 +174,9 @@ int mainLoad(){
 
     SDL_SetWindowResizable(mainWindow, SDL_TRUE);
 
-    SDL_SetRenderDrawColor(mainRenderer, 0x80, 0xFF, 0x80, 0xFF); //Set background color
+    //SDL_SetRenderDrawColor(mainRenderer, 0x80, 0xFF, 0xFF, 0xFF); //Set background color
+
+    bgTexture = loadTexture("Assets/BG/mainmenu.bmp", mainRenderer);
 
     loadMMAssets();
 
@@ -210,7 +217,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
   Mix_PlayMusic(bgMusic, -1);
-  Mix_VolumeMusic(0);
+  Mix_VolumeMusic(50);
 
   addElement(&globalGUI, &logo);
   addElement(&globalGUI, &btt1);
