@@ -15,7 +15,7 @@ extern SDL_Window* mainWindow;
 SDL_Event e;
 
 
-SDL_Texture* briscolaBG;
+SDL_Texture* briscolaBG = NULL;
 int briscolaLoop = 0;
 int playingPlayer = 0;
 
@@ -49,6 +49,9 @@ elemGUI txcard1, txcard2, txcard3;
 
 //Button to confirm the choice
 elemGUI confirmBttPL1, confirmBttPL2;
+
+//Label that shows you which player's turn is
+elemGUI infoLabelPL1, infoLabelPL2;
 
 int initBriscola(){
 
@@ -210,9 +213,19 @@ int otherElements(){
 															loadFromText("Confirm", (SDL_Color){0, 255, 0, 0}, mainRenderer,
 															"Assets/Font/comicz.ttf", 200), &confirmCard);
 
+	infoLabelPL1 = createElement(1, GUI_LABEL, (SDL_Rect){20, 10, 200, 40}, (SDL_Color){0,0,0,0},
+															loadFromText("Player 1's turn", (SDL_Color){0, 40, 80, 0}, mainRenderer,
+															"Assets/Font/comicz.ttf", 200), &confirmCard);
+
+	infoLabelPL2 = createElement(0, GUI_LABEL, (SDL_Rect){20, 10, 200, 40}, (SDL_Color){0,0,0,0},
+															loadFromText("Player 2's turn", (SDL_Color){0, 40, 80, 0}, mainRenderer,
+															"Assets/Font/comicz.ttf", 200), &confirmCard);
+
 
 	addElement(&briscolaGUI, &confirmBttPL1);
 	addElement(&briscolaGUI, &confirmBttPL2);
+	addElement(&briscolaGUI, &infoLabelPL1);
+	addElement(&briscolaGUI, &infoLabelPL2);
 
 	return 0;
 
@@ -291,6 +304,15 @@ int confirmCard(int x, int y, int ptr){
 	//confirmBttPL2.active = 0;
 	//if(!playingPlayer) confirmBttPL1.active = 1;
 	//else if (playingPlayer) confirmBttPL2.active = 1;
+
+	if(!playingPlayer){
+		infoLabelPL1.active = 1;
+		infoLabelPL2.active = 0;
+	}
+	else if (playingPlayer){
+		infoLabelPL2.active = 1;
+		infoLabelPL1.active = 0;
+	}
 
 	SDL_Delay(500); //Yo this seems cool
 
