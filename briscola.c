@@ -38,6 +38,7 @@ SDL_Window* mainWindow = NULL;
 SDL_Surface* mainScreenSurface = NULL;
 SDL_Renderer* mainRenderer = NULL;
 SDL_Texture* bgTexture = NULL;
+SDL_Surface* windowIcon = NULL;
 
 FPSCounter fpsDraw;
 
@@ -177,6 +178,10 @@ int mainLoad(){
     //SDL_SetRenderDrawColor(mainRenderer, 0x80, 0xFF, 0xFF, 0xFF); //Set background color
 
     bgTexture = loadTexture("Assets/BG/mainmenu.bmp", mainRenderer);
+
+    windowIcon = SDL_LoadBMP("Assets/Icon/icon.bmp");
+    SDL_SetWindowIcon(mainWindow, windowIcon);
+    SDL_FreeSurface(windowIcon);
 
     loadMMAssets();
 
