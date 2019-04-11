@@ -15,6 +15,7 @@ extern SDL_Window* mainWindow;
 SDL_Event e;
 
 
+SDL_Texture* briscolaBG;
 int briscolaLoop = 0;
 int playingPlayer = 0;
 
@@ -48,6 +49,8 @@ elemGUI txcard1, txcard2, txcard3;
 elemGUI confirmBtt;
 
 int initBriscola(){
+
+	briscolaBG = loadTexture("Assets/BG/wooden.bmp", mainRenderer);
 
 	initMazzo(&jiisus, mainRenderer);
 
@@ -107,6 +110,8 @@ int mainBriscolaLoop(){
 	while(!briscolaLoop){
 
 		SDL_RenderClear(mainRenderer);
+
+		SDL_RenderCopy(mainRenderer, briscolaBG, NULL, NULL);
 
 		drawFPS(&fpsCtr, SDL_GetTicks());
 		drawGUI(briscolaGUI, mainRenderer);
