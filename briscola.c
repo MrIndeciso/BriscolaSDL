@@ -37,7 +37,7 @@ int SCR_LHEIGHT = 450;
 SDL_Window* mainWindow = NULL;
 SDL_Surface* mainScreenSurface = NULL;
 SDL_Renderer* mainRenderer = NULL;
-SDL_Texture* bgTexture;
+SDL_Texture* bgTexture = NULL;
 
 FPSCounter fpsDraw;
 
@@ -90,6 +90,7 @@ int mainInit(){ //This really makes no sense because with a return the "else" is
                 if(TTF_Init()==-1){
                   return -1;
                 } else {
+                    Mix_Init(MIX_INIT_OGG);
                     if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 8192)<0){
                       return -1;
                     } else {
@@ -145,7 +146,6 @@ int mainLoop(){
         SDL_RenderCopy(mainRenderer, bgTexture, NULL, NULL);
 				drawGUI(globalGUI, mainRenderer);
         drawFPS(&fpsDraw, SDL_GetTicks());
-
 
         SDL_RenderPresent(mainRenderer);
 
@@ -215,7 +215,7 @@ int loadMMAssets(){ //Called in mainLoad
   voldw = createElement(1, GUI_IMAGE, (SDL_Rect){740, 430, 20, 20}, (SDL_Color){0,0,0,0},
                         loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinus);
 
-  bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
+  bgMusic = Mix_LoadMUS("Assets/Sound/snd.ogg");
   Mix_PlayMusic(bgMusic, -1);
   Mix_VolumeMusic(0);
 
