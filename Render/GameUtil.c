@@ -23,8 +23,8 @@ int initMazzo(Mazzo *mazzo, SDL_Renderer *renderer){
   int i;
 
   SDL_Rect texturePos;
-  texturePos.h = 227;
-  texturePos.w = 117;
+  texturePos.h = 454;
+  texturePos.w = 234;
 
 
   for(i=0;i<40;i++){
@@ -33,13 +33,13 @@ int initMazzo(Mazzo *mazzo, SDL_Renderer *renderer){
     mazzo->carte[i].seed = i/10;
     mazzo->carte[i].take = cardTake[i];
     mazzo->carte[i].absPos = i;
-    texturePos.x = 155 + ((mapCardPos[i]-1)/3 * texturePos.w);
+    texturePos.x = 310 + ((mapCardPos[i]-1)/3 * texturePos.w);
     texturePos.y = (mapCardPos[i]-1)%3 * texturePos.h;
     mazzo->carte[i].pos = texturePos;
   }
 
   mazzo->texture = loadTexture("Assets/Briscola/Milanesi.bmp", renderer);
-	mazzo->mazzoGirato = (SDL_Rect){0, 0, 155, 283};
+	mazzo->mazzoGirato = (SDL_Rect){0, 0, 310, 566};
 
   return 0;
 
