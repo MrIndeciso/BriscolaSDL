@@ -24,6 +24,9 @@ int doNothing(int x, int y, Uint32 ptr);
 
 int drawPLCards();
 
+int pl1Wins();
+int pl2Wins();
+
 int instaGUIelem();
 int drawHand();
 

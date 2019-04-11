@@ -23,6 +23,8 @@ FPSCounter fpsCtr;
 
 Mazzo jiisus;
 
+Carta emptyCarta; //Let's see if I can scam the system
+
 Carta banco[2];
 
 gGUI briscolaGUI;
@@ -46,7 +48,7 @@ elemGUI volupb, voldwb, volmutb, volmut2b;
 elemGUI txcard1, txcard2, txcard3;
 
 //Button to confirm the choice
-elemGUI confirmBtt;
+elemGUI confirmBttPL1, confirmBttPL2;
 
 int initBriscola(){
 
@@ -67,6 +69,11 @@ int initBriscola(){
 	otherElements();
 
 	giveFirstCards();
+
+	emptyCarta.num = 42;
+
+	banco[0] = emptyCarta;
+	banco[1] = emptyCarta;
 
 	mainBriscolaLoop();
 
@@ -147,6 +154,8 @@ int giveFirstCards(){
 		pl2.mano[i/2] = jiisus.carte[i-1];
 	} //Gurini triggered PT2
 
+	jiisus.currentNum += 6;
+
 	return 0;
 
 }
@@ -193,11 +202,19 @@ int instaGUIelem(){
 }
 
 int otherElements(){
-	confirmBtt = createElement(1, GUI_LABEL, (SDL_Rect){625, 320, 100, 40}, (SDL_Color){0,0,0,0},
-														loadFromText("Confirm", (SDL_Color){255, 0, 0, 0}, mainRenderer,
-														"Assets/Font/comicz.ttf", 200), &confirmCard);
+	confirmBttPL1 = createElement(1, GUI_LABEL, (SDL_Rect){625, 320, 100, 40}, (SDL_Color){0,0,0,0},
+															loadFromText("Confirm", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+															"Assets/Font/comicz.ttf", 200), &confirmCard);
 
-	addElement(&briscolaGUI, &confirmBtt);
+	confirmBttPL2 = createElement(0, GUI_LABEL, (SDL_Rect){625, 320, 100, 40}, (SDL_Color){0,0,0,0},
+															loadFromText("Confirm", (SDL_Color){0, 255, 0, 0}, mainRenderer,
+															"Assets/Font/comicz.ttf", 200), &confirmCard);
+
+
+	addElement(&briscolaGUI, &confirmBttPL1);
+	addElement(&briscolaGUI, &confirmBttPL2);
+
+	return 0;
 
 }
 
@@ -215,11 +232,113 @@ int drawPLCards(){
 
 }
 
-int clickCard1(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[0]; }
-int clickCard2(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[1]; }
-int clickCard3(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[2]; }
+int clickCard1(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[0]; pls[playingPlayer]->chosenNum = 0; }
+int clickCard2(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[1]; pls[playingPlayer]->chosenNum = 1; }
+int clickCard3(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]->mano[2]; pls[playingPlayer]->chosenNum = 2; }
 
 int confirmCard(int x, int y, int ptr){
+
+	if(banco[1].num == emptyCarta.num || banco[0].num == emptyCarta.num) playingPlayer = !playingPlayer;
+	else {
+
+		if(banco[0].seed == banco[1].seed){
+			if(banco[0].take>banco[1].take){
+				//PL1 wins
+				printf("DebuggoniPT1\n");
+
+				pl1Wins();
+
+			} else if(banco[0].take<banco[1].take){
+				//PL2 wins
+				printf("DebuggoniV2PT1\n");
+
+				pl2Wins();
+
+			} else {
+				printf("Dang I am bad and this is wrong\n");
+			}
+		} else if(banco[0].seed == jiisus.briscola.seed){
+			//PL1 wins
+			printf("DebuggoniPT2\n");
+
+			pl1Wins();
+
+		} else if(banco[1].seed == jiisus.briscola.seed){
+			//PL2 wins
+			printf("DebuggoniV2PT2\n");
+
+			pl2Wins();
+
+		} else if(playingPlayer){
+			//PL1 wins
+			printf("DebuggoniPT3\n");
+
+			pl1Wins();
+
+		} else if(!playingPlayer){
+			//PL2 wins
+			printf("DebuggoniV2PT3\n");
+
+			pl2Wins();
+
+		} else {
+			printf("Dang I am bad and this is wrong\n");
+		}
+
+	}
+
+	//confirmBttPL1.active = 0;
+	//confirmBttPL2.active = 0;
+	//if(!playingPlayer) confirmBttPL1.active = 1;
+	//else if (playingPlayer) confirmBttPL2.active = 1;
+
+	SDL_Delay(500); //Yo this seems cool
+
+	return 0;
+
+}
+
+int pl1Wins(){
+
+	pl1.mucchio[pl1.mucchioNum] = banco[0];
+	++pl1.mucchioNum;
+	pl1.mucchio[pl1.mucchioNum] = banco[1];
+	++pl1.mucchioNum;
+
+	pl1.mano[pl1.chosenNum] = jiisus.carte[jiisus.currentNum];
+	++jiisus.currentNum;
+
+	pl2.mano[pl2.chosenNum] = jiisus.carte[jiisus.currentNum];
+	++jiisus.currentNum;
+
+	banco[0] = emptyCarta;
+	banco[1] = emptyCarta;
+
+	playingPlayer = 0;
+
+	return 0;
+
+}
+
+int pl2Wins(){
+
+	pl2.mucchio[pl2.mucchioNum] = banco[0];
+	++pl2.mucchioNum;
+	pl2.mucchio[pl2.mucchioNum] = banco[1];
+	++pl2.mucchioNum;
+
+	pl2.mano[pl2.chosenNum] = jiisus.carte[jiisus.currentNum];
+	++jiisus.currentNum;
+
+	pl1.mano[pl1.chosenNum] = jiisus.carte[jiisus.currentNum];
+	++jiisus.currentNum;
+
+	banco[0] = emptyCarta;
+	banco[1] = emptyCarta;
+
+	playingPlayer = 1;
+
+	return 0;
 
 }
 

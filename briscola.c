@@ -217,7 +217,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   bgMusic = Mix_LoadMUS("Assets/Sound/snd.mp3");
   Mix_PlayMusic(bgMusic, -1);
-  Mix_VolumeMusic(50);
+  Mix_VolumeMusic(0);
 
   addElement(&globalGUI, &logo);
   addElement(&globalGUI, &btt1);

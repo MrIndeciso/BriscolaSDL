@@ -24,6 +24,8 @@ typedef struct Mazzo {
 typedef struct Player {
   Carta mano[3];
   Carta mucchio[40];
+  int mucchioNum;
+  int chosenNum;
   int punti;
   char nome[15];
 } Player;
