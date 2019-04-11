@@ -215,7 +215,7 @@ int loadMMAssets(){ //Called in mainLoad
   voldw = createElement(1, GUI_IMAGE, (SDL_Rect){740, 430, 20, 20}, (SDL_Color){0,0,0,0},
                         loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinus);
 
-  bgMusic = Mix_LoadMUS("Assets/Sound/snd.ogg");
+  bgMusic = Mix_LoadMUS("Assets/Sound/mainmenu.ogg");
   Mix_PlayMusic(bgMusic, -1);
   Mix_VolumeMusic(0);
 
