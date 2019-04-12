@@ -55,8 +55,6 @@ elemGUI infoLabelPL1, infoLabelPL2;
 
 int initBriscola(){
 
-	briscolaBG = loadTexture("Assets/BG/wooden.bmp", mainRenderer);
-
 	initMazzo(&jiisus, mainRenderer);
 
 	initFPS(&fpsCtr, mainRenderer, 1, FPSTR);
@@ -73,12 +71,25 @@ int initBriscola(){
 
 	giveFirstCards();
 
+	setupAssets();
+
+	mainBriscolaLoop();
+
+	return 0;
+
+}
+
+int setupAssets(){ //Mi inventerò un nome migliore
+
+	briscolaBG = loadTexture("Assets/BG/wooden.bmp", mainRenderer);
+
 	emptyCarta.num = 42;
 
 	banco[0] = emptyCarta;
 	banco[1] = emptyCarta;
 
-	mainBriscolaLoop();
+	pl1.punti = 0;
+	pl2.punti = 0;
 
 	return 0;
 
@@ -226,9 +237,9 @@ int otherElements(){
 
 int drawPLCards(){
 
-	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[0].pos, &(SDL_Rect){250, 300, 100, 220});
-	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[1].pos, &(SDL_Rect){350, 300, 100, 220});
-	SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[2].pos, &(SDL_Rect){450, 300, 100, 220});
+	if(pls[playingPlayer]->mano[0].num != 42) SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[0].pos, &(SDL_Rect){250, 300, 100, 220});
+	if(pls[playingPlayer]->mano[1].num != 42) SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[1].pos, &(SDL_Rect){350, 300, 100, 220});
+	if(pls[playingPlayer]->mano[2].num != 42) SDL_RenderCopy(mainRenderer, jiisus.texture, &pls[playingPlayer]->mano[2].pos, &(SDL_Rect){450, 300, 100, 220});
 
 	SDL_RenderCopy(mainRenderer, jiisus.texture, &banco[0].pos, &(SDL_Rect){310, 80, 80, 180});
 
@@ -325,12 +336,12 @@ int pl1Wins(){
 	++pl1.mucchioNum;
 	pl1.mucchio[pl1.mucchioNum] = banco[1];
 	++pl1.mucchioNum;
-	pl1.punti =+ banco[0].value + banco[1].value;
+	pl1.punti += banco[0].value + banco[1].value;
 
 	banco[0] = emptyCarta;
 	banco[1] = emptyCarta;
 
-	if(jiisus.currentNum>39) {
+	if(jiisus.currentNum>=39) {
 		pl1.mano[pl1.chosenNum].num = 42;
 		pl2.mano[pl2.chosenNum].num = 42;
 		return 0;
@@ -359,7 +370,7 @@ int pl2Wins(){
 	banco[0] = emptyCarta;
 	banco[1] = emptyCarta;
 
-	if(jiisus.currentNum==39) {
+	if(jiisus.currentNum>=39) {
 		pl1.mano[pl1.chosenNum].num = 42;
 		pl2.mano[pl2.chosenNum].num = 42;
 		return 0;
@@ -379,9 +390,9 @@ int pl2Wins(){
 
 int getWinner(){
 
-	printf("\nJiisus\n");
-
 	printf("\n%d\n%d\n", pl1.punti, pl2.punti);
+
+	printf("%s", (pl1.punti==pl2.punti)?"Pareggio":((pl1.punti>pl2.punti)?"Pl1 vince":"Pl2 vince"));
 
 	return 0;
 

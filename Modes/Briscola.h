@@ -36,4 +36,6 @@ int giveFirstCards();
 
 int getWinner();
 
+int setupAssets();
+
 #endif // BRISCOLA_H_INCLUDED
