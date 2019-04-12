@@ -79,7 +79,7 @@ SDL_Texture* loadFromText(char* text, SDL_Color textColor, SDL_Renderer* rendere
   TTF_Font* font;
   font = TTF_OpenFont(fontName, fontSize);
 
-  temp = TTF_RenderText_Solid(font, text, textColor);
+  temp = TTF_RenderText_Blended(font, text, textColor);
 
   if(temp == NULL) return -1;
 

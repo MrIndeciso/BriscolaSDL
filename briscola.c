@@ -25,6 +25,7 @@ int volPlus(int, int, Uint32);
 int volMinus(int, int, Uint32);
 int muteAudio(int, int, Uint32);
 int startBriscola(int, int, Uint32);
+int mouseHover(int);
 
 //The resolution that we render with
 int SCR_WIDTH = 800;
@@ -46,7 +47,9 @@ SDL_Event e;
 
 int breakLoop = 0;
 
-elemGUI logo, btt1, btt2, btt3, volup, voldw, volmut, volmut2;
+int mx, my;
+
+elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2;
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
@@ -145,6 +148,27 @@ int mainLoop(){
         SDL_RenderClear(mainRenderer);
 
         SDL_RenderCopy(mainRenderer, bgTexture, NULL, NULL);
+
+        if(e.type == SDL_MOUSEMOTION){ //Check wheter mouse is hovering the buttons
+          if(e.motion.x >= btt1.pos.x && e.motion.x <= btt1.pos.x + btt1.pos.w && e.motion.y >= btt1.pos.y && e.motion.y <= btt1.pos.y + btt1.pos.h) {
+            mouseHover(1);
+            printf("%d ", btt1Selected.active);
+          }
+          else if(e.motion.x >= btt2.pos.x && e.motion.x <= btt2.pos.x + btt2.pos.w && e.motion.y >= btt2.pos.y && e.motion.y <= btt2.pos.y + btt2.pos.h) {
+            mouseHover(2);
+          }
+          else if(e.motion.x >= btt3.pos.x && e.motion.x <= btt3.pos.x + btt3.pos.w && e.motion.y >= btt3.pos.y && e.motion.y <= btt3.pos.y + btt3.pos.h) {
+            mouseHover(3);
+          }
+          else{
+            btt1.active = 1;
+            btt1Selected.active = 0;
+            btt2.active = 1;
+            btt2Selected.active = 0;
+            btt3.active = 1;
+            btt3Selected.active = 0;
+          }
+        }
 				drawGUI(globalGUI, mainRenderer);
         drawFPS(&fpsDraw, SDL_GetTicks());
 
@@ -193,20 +217,32 @@ int mainLoad(){
 
 int loadMMAssets(){ //Called in mainLoad
 
-  logo = createElement(1, GUI_IMAGE, (SDL_Rect){300, 50, 200, 80}, (SDL_Color){0,0,0,0},
+  logo = createElement(1, GUI_IMAGE, (SDL_Rect){40, 50, 200, 80}, (SDL_Color){0,0,0,0},
                         loadTexture("Assets/MM/Logo.bmp", mainRenderer), &handleClick);
 
-  btt1 = createElement(1, GUI_LABEL, (SDL_Rect){350, 180, 100, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Inizia", (SDL_Color){200, 0, 200, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), &startBriscola);
+  btt1 = createElement(1, GUI_LABEL, (SDL_Rect){65, 160, 80, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Inizia", (SDL_Color){255, 255, 255, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 100), &doNothing);
 
-  btt2 = createElement(1, GUI_LABEL, (SDL_Rect){350, 260, 100, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Opzioni", (SDL_Color){0, 200, 200, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), &handleClick);
+  btt2 = createElement(1, GUI_LABEL, (SDL_Rect){65, 240, 100, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Opzioni", (SDL_Color){255, 255, 255, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 100), &doNothing);
 
-  btt3 = createElement(1, GUI_LABEL, (SDL_Rect){350, 340, 100, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Esci", (SDL_Color){200, 200, 0, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 200), &quitGame);
+  btt3 = createElement(1, GUI_LABEL, (SDL_Rect){65, 320, 60, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Esci", (SDL_Color){255, 255, 255, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 100), &doNothing);
+
+  btt1Selected = createElement(0, GUI_LABEL, (SDL_Rect){465, 160, 80, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Iniziaa", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 100), &startBriscola);
+
+  btt2Selected = createElement(0, GUI_LABEL, (SDL_Rect){465, 240, 100, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Opzionii", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 100), &handleClick);
+
+  btt3Selected = createElement(0, GUI_LABEL, (SDL_Rect){465, 320, 60, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Escii", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 100), &quitGame);
 
   volmut = createElement(0, GUI_IMAGE, (SDL_Rect){780, 430, 20, 20}, (SDL_Color){0,0,0,0},
                         loadTexture("Assets/Sound/music.bmp", mainRenderer), &muteAudio);
@@ -260,6 +296,25 @@ int muteAudio(int x, int y, Uint32 ptr) {
 }
 
 int startBriscola(int x, int y, Uint32 ptr){
+  Mix_HaltMusic();
 	breakLoop = 1;
 	initBriscola();
 }
+
+int mouseHover(int bttn) {
+  switch(bttn){
+    case 1:
+      btt1.active = 0;
+      btt1Selected.active = 1;
+    break;
+    case 2:
+      btt2.active = 0;
+      btt2Selected.active = 1;
+    break;
+    case 3:
+      btt3.active = 0;
+      btt3Selected.active = 1;
+    break;
+  }
+}
+
