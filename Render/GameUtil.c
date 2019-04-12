@@ -29,9 +29,9 @@ int initMazzo(Mazzo *mazzo, SDL_Renderer *renderer){
 
   for(i=0;i<40;i++){
     mazzo->carte[i].num = i%10;
-    mazzo->carte[i].value = cardValue[i];
+    mazzo->carte[i].value = cardValue[i%10];
     mazzo->carte[i].seed = i/10;
-    mazzo->carte[i].take = cardTake[i];
+    mazzo->carte[i].take = cardTake[i%10];
     mazzo->carte[i].absPos = i;
     texturePos.x = 310 + ((mapCardPos[i]-1)/3 * texturePos.w);
     texturePos.y = (mapCardPos[i]-1)%3 * texturePos.h;
