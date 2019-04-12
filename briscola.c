@@ -74,6 +74,8 @@ int main(int argc, char* args[]){
 
 int mainInit(){ //This really makes no sense because with a return the "else" isn't needed but I'll fix it another time
 
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+
     if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO)<0) {
         printf("%s", errorString[ERR_CANT_LOAD_SDL]);
         return -1;
@@ -152,7 +154,6 @@ int mainLoop(){
         if(e.type == SDL_MOUSEMOTION){ //Check wheter mouse is hovering the buttons
           if(e.motion.x >= btt1.pos.x && e.motion.x <= btt1.pos.x + btt1.pos.w && e.motion.y >= btt1.pos.y && e.motion.y <= btt1.pos.y + btt1.pos.h) {
             mouseHover(1);
-            printf("%d ", btt1Selected.active);
           }
           else if(e.motion.x >= btt2.pos.x && e.motion.x <= btt2.pos.x + btt2.pos.w && e.motion.y >= btt2.pos.y && e.motion.y <= btt2.pos.y + btt2.pos.h) {
             mouseHover(2);
@@ -169,6 +170,7 @@ int mainLoop(){
             btt3Selected.active = 0;
           }
         }
+
 				drawGUI(globalGUI, mainRenderer);
         drawFPS(&fpsDraw, SDL_GetTicks());
 
@@ -194,8 +196,6 @@ int mainLoad(){
 
     //This is probably wrong
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
     SDL_SetWindowResizable(mainWindow, SDL_TRUE);
 
@@ -232,16 +232,16 @@ int loadMMAssets(){ //Called in mainLoad
                         loadFromText("Esci", (SDL_Color){255, 255, 255, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 100), &doNothing);
 
-  btt1Selected = createElement(0, GUI_LABEL, (SDL_Rect){465, 160, 80, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Iniziaa", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+  btt1Selected = createElement(0, GUI_LABEL, (SDL_Rect){65, 160, 80, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Inizia", (SDL_Color){255, 0, 0, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 100), &startBriscola);
 
-  btt2Selected = createElement(0, GUI_LABEL, (SDL_Rect){465, 240, 100, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Opzionii", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+  btt2Selected = createElement(0, GUI_LABEL, (SDL_Rect){65, 240, 100, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Opzioni", (SDL_Color){255, 0, 0, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 100), &handleClick);
 
-  btt3Selected = createElement(0, GUI_LABEL, (SDL_Rect){465, 320, 60, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Escii", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+  btt3Selected = createElement(0, GUI_LABEL, (SDL_Rect){65, 320, 60, 40}, (SDL_Color){0,0,0,0},
+                        loadFromText("Esci", (SDL_Color){255, 0, 0, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 100), &quitGame);
 
   volmut = createElement(0, GUI_IMAGE, (SDL_Rect){780, 430, 20, 20}, (SDL_Color){0,0,0,0},
@@ -268,6 +268,9 @@ int loadMMAssets(){ //Called in mainLoad
   addElement(&globalGUI, &voldw);
   addElement(&globalGUI, &volmut);
   addElement(&globalGUI, &volmut2);
+  addElement(&globalGUI, &btt1Selected);
+  addElement(&globalGUI, &btt2Selected);
+  addElement(&globalGUI, &btt3Selected);
 
   return 0;
 
@@ -317,4 +320,3 @@ int mouseHover(int bttn) {
     break;
   }
 }
-

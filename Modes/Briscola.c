@@ -44,7 +44,7 @@ Player *pls[2] = {&pl1, &pl2}; //Used almost everywhere
 //Music stuff
 elemGUI volupb, voldwb, volmutb, volmut2b;
 
-//That thing with a 6 line comment stuff
+//That thing with a wrong comment stuff
 elemGUI txcard1, txcard2, txcard3;
 
 //Button to confirm the choice
@@ -115,8 +115,6 @@ int muteAudioB(int x, int y, Uint32 ptr) {
 
 int mainBriscolaLoop(){
 
-	int i = 0;
-
 	while(!briscolaLoop){
 
 		SDL_RenderClear(mainRenderer);
@@ -180,12 +178,7 @@ int drawHand(){
 //Here starts the real business
 
 int instaGUIelem(){
-		/* Principle of operation:
-		Runs every time something happens that changes cards or player
-		Manages 3 elements
-		Basically a second GUI renderer just draws these 3 elements
-		The elements have to change every time
-		It's not hard but I still wanted to write a comment for this */
+	//The comment that was here before was actually wrong
 
 	cards.elemCount = 0;
 
@@ -251,6 +244,12 @@ int clickCard3(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]
 
 int confirmCard(int x, int y, int ptr){
 
+	printf("\n%d\n", pl1.mano[0].num + pl1.mano[1].num + pl1.mano[2].num + pl2.mano[0].num + pl2.mano[1].num + pl2.mano[2].num);
+
+	if((pl1.mano[0].num + pl1.mano[1].num + pl1.mano[2].num + pl2.mano[0].num + pl2.mano[1].num + pl2.mano[2].num) == 252){
+		getWinner();
+	}
+
 	if(banco[1].num == emptyCarta.num || banco[0].num == emptyCarta.num) playingPlayer = !playingPlayer;
 	else {
 
@@ -314,7 +313,7 @@ int confirmCard(int x, int y, int ptr){
 		infoLabelPL1.active = 0;
 	}
 
-	SDL_Delay(500); //Yo this seems cool
+	//SDL_Delay(500); //Yo this seems cool
 
 	return 0;
 
@@ -326,15 +325,22 @@ int pl1Wins(){
 	++pl1.mucchioNum;
 	pl1.mucchio[pl1.mucchioNum] = banco[1];
 	++pl1.mucchioNum;
+	pl1.punti =+ banco[0].value + banco[1].value;
+
+	banco[0] = emptyCarta;
+	banco[1] = emptyCarta;
+
+	if(jiisus.currentNum>39) {
+		pl1.mano[pl1.chosenNum].num = 42;
+		pl2.mano[pl2.chosenNum].num = 42;
+		return 0;
+	}
 
 	pl1.mano[pl1.chosenNum] = jiisus.carte[jiisus.currentNum];
 	++jiisus.currentNum;
 
 	pl2.mano[pl2.chosenNum] = jiisus.carte[jiisus.currentNum];
 	++jiisus.currentNum;
-
-	banco[0] = emptyCarta;
-	banco[1] = emptyCarta;
 
 	playingPlayer = 0;
 
@@ -348,6 +354,16 @@ int pl2Wins(){
 	++pl2.mucchioNum;
 	pl2.mucchio[pl2.mucchioNum] = banco[1];
 	++pl2.mucchioNum;
+	pl2.punti += banco[0].value + banco[1].value;
+
+	banco[0] = emptyCarta;
+	banco[1] = emptyCarta;
+
+	if(jiisus.currentNum==39) {
+		pl1.mano[pl1.chosenNum].num = 42;
+		pl2.mano[pl2.chosenNum].num = 42;
+		return 0;
+	}
 
 	pl2.mano[pl2.chosenNum] = jiisus.carte[jiisus.currentNum];
 	++jiisus.currentNum;
@@ -355,10 +371,17 @@ int pl2Wins(){
 	pl1.mano[pl1.chosenNum] = jiisus.carte[jiisus.currentNum];
 	++jiisus.currentNum;
 
-	banco[0] = emptyCarta;
-	banco[1] = emptyCarta;
-
 	playingPlayer = 1;
+
+	return 0;
+
+}
+
+int getWinner(){
+
+	printf("\nJiisus\n");
+
+	printf("\n%d\n%d\n", pl1.punti, pl2.punti);
 
 	return 0;
 

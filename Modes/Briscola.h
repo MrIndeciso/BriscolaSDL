@@ -34,4 +34,6 @@ int otherElements();
 
 int giveFirstCards();
 
+int getWinner();
+
 #endif // BRISCOLA_H_INCLUDED
