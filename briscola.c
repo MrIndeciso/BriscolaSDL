@@ -270,7 +270,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   //Options menu elements start here
   optionsbg = createElement(0, GUI_IMAGE, (SDL_Rect){380, 60, 480, 350}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/optionsbg.bmp", mainRenderer), &doNothing);
+                        loadTexture("Assets/MM/Options/optionsbg.bmp", mainRenderer), &doNothing);
 
   //optitle = createElement(0, GUI_LABEL, (SDL_Rect){265, 50, 200, 15}, (SDL_Color){0,0,0,0},
   //                      loadFromText(, mainRenderer), &doNothing);
