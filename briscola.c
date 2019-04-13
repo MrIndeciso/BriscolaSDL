@@ -27,6 +27,10 @@ int muteAudio(int, int, Uint32);
 int startBriscola(int, int, Uint32);
 int mouseHover(int);
 
+int optionsEnabled = 0;
+int handleOptions();
+
+
 //The resolution that we render with
 int SCR_WIDTH = 800;
 int SCR_HEIGHT = 450;
@@ -49,7 +53,7 @@ int breakLoop = 0;
 
 int mx, my;
 
-elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2;
+elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2, credits, credits2, optionsbg;
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
@@ -233,15 +237,15 @@ int loadMMAssets(){ //Called in mainLoad
                         "Assets/Font/comicz.ttf", 100), &doNothing);
 
   btt1Selected = createElement(0, GUI_LABEL, (SDL_Rect){65, 160, 80, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Inizia", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+                        loadFromText("Inizia", (SDL_Color){10, 10, 10, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 100), &startBriscola);
 
   btt2Selected = createElement(0, GUI_LABEL, (SDL_Rect){65, 240, 100, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Opzioni", (SDL_Color){255, 0, 0, 0}, mainRenderer,
-                        "Assets/Font/comicz.ttf", 100), &handleClick);
+                        loadFromText("Opzioni", (SDL_Color){10, 10, 10, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 100), &handleOptions);
 
   btt3Selected = createElement(0, GUI_LABEL, (SDL_Rect){65, 320, 60, 40}, (SDL_Color){0,0,0,0},
-                        loadFromText("Esci", (SDL_Color){255, 0, 0, 0}, mainRenderer,
+                        loadFromText("Esci", (SDL_Color){10, 10, 10, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 100), &quitGame);
 
   volmut = createElement(0, GUI_IMAGE, (SDL_Rect){780, 430, 20, 20}, (SDL_Color){0,0,0,0},
@@ -255,6 +259,18 @@ int loadMMAssets(){ //Called in mainLoad
 
   voldw = createElement(1, GUI_IMAGE, (SDL_Rect){740, 430, 20, 20}, (SDL_Color){0,0,0,0},
                         loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinus);
+
+  credits = createElement(1, GUI_LABEL, (SDL_Rect){5, 436, 140, 10}, (SDL_Color){0,0,0,0},
+                        loadFromText("Programming & memes by Roberto Bertolini", (SDL_Color){10, 10, 10, 0},
+                        mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 20), &doNothing);
+
+  credits2 = createElement(1, GUI_LABEL, (SDL_Rect){5, 425, 100, 10}, (SDL_Color){0,0,0,0},
+                        loadFromText("Music & design by Matteo Cerri", (SDL_Color){10, 10, 10, 0},
+                        mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 20), &doNothing);
+
+  //Options menu elements start here
+  optionsbg = createElement(0, GUI_IMAGE, (SDL_Rect){270, 50, 480, 350}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/blank.bmp", mainRenderer), &doNothing);
 
   bgMusic = Mix_LoadMUS("Assets/Sound/mainmenu.ogg");
   Mix_PlayMusic(bgMusic, -1);
@@ -271,6 +287,10 @@ int loadMMAssets(){ //Called in mainLoad
   addElement(&globalGUI, &btt1Selected);
   addElement(&globalGUI, &btt2Selected);
   addElement(&globalGUI, &btt3Selected);
+  addElement(&globalGUI, &credits);
+  addElement(&globalGUI, &credits2);
+
+  addElement(&globalGUI, &optionsbg);
 
   return 0;
 
@@ -318,5 +338,17 @@ int mouseHover(int bttn) {
       btt3.active = 0;
       btt3Selected.active = 1;
     break;
+  }
+}
+
+int handleOptions(){
+  switch(optionsEnabled){
+    case 0:
+      optionsEnabled = 1;
+      optionsbg.active = 1;
+    break;
+    case 1:
+      optionsEnabled = 0;
+      optionsbg.active = 0;
   }
 }
