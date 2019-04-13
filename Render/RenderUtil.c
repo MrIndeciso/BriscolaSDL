@@ -9,6 +9,8 @@ extern int SCR_LHEIGHT;
 extern int SCR_WIDTH;
 extern int SCR_HEIGHT;
 
+extern int qualityRes;
+
 char errorString[ERRCOUNT][63] = {"Error: could not load SDL\n\0", "Error: could not create Window\n\0", "Error: could not load image\n\0", "Error: could not convert image\n\0", "Error: file doesn't exist\n\0", "Error: could not create a renderer\n\0", "Error: could not create a texture\n\0"};
 
 SDL_Surface* loadSurface(char* source, SDL_PixelFormat* format){
@@ -43,6 +45,7 @@ SDL_Surface* loadSurface(char* source, SDL_PixelFormat* format){
 }
 
 SDL_Texture* loadTexture(char* source, SDL_Renderer* renderer){
+
     SDL_Surface* temp = NULL;
     SDL_Texture* loadedTexture = NULL;
 
@@ -69,6 +72,42 @@ SDL_Texture* loadTexture(char* source, SDL_Renderer* renderer){
 
     //Returns a pointer to the image as SDL likes
     return loadedTexture;
+}
+
+
+SDL_Texture* loadTextureRes(char* source, SDL_Renderer* renderer){
+
+  SDL_Surface* temp = NULL;
+  SDL_Texture* loadedTexture = NULL;
+
+  char *finalSource = (char*) malloc(255);
+  snprintf(finalSource, 255, "%s%s\0", source, qualityRes?(qualityRes>1)?"h.bmp":"m.bmp":"l.bmp");
+
+  if(!fileExists(finalSource)){
+      printf("%s", errorString[ERR_FILE_DOESNT_EXIST]);
+      return -1;
+  }
+
+  temp = SDL_LoadBMP(finalSource);
+
+  if(temp == NULL) {
+      printf("%s", errorString[ERR_CANT_LOAD_IMAGE]);
+      return -1;
+  }
+
+  loadedTexture = SDL_CreateTextureFromSurface(renderer, temp);
+
+  if(loadedTexture == NULL){
+      printf("%s", errorString[ERR_CANT_LOAD_TEXTURE]);
+      return -1;
+  }
+
+  SDL_FreeSurface(temp);
+
+  free(finalSource);
+
+  //Returns a pointer to the image as SDL likes
+  return loadedTexture;
 }
 
 SDL_Texture* loadFromText(char* text, SDL_Color textColor, SDL_Renderer* renderer, char* fontName, int fontSize){

@@ -3,7 +3,7 @@
 #include "Lib/SDL/include/SDL_ttf.h"
 #include "Lib/SDL/include/SDL_net.h"
 #include <stdio.h>
-#include <unistd.h>
+#include <math.h>
 
 #include "Modes/Briscola.h"
 #include "Render/RenderUtil.h"
@@ -27,6 +27,7 @@ int volMinus(int, int, Uint32);
 int muteAudio(int, int, Uint32);
 int startBriscola(int, int, Uint32);
 int mouseHover(int);
+int checkForMouseHover(SDL_Event);
 
 int optionsEnabled = 0, FPSEnabled = 0;
 int handleOptions();
@@ -53,7 +54,20 @@ SDL_Event e;
 
 int breakLoop = 0;
 
-elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2, credits, credits2, optionsbg, optitle, opGraphics, opFakeSlider1, opMusicVol, opFakeSlider2, opSFXVol, opFakeSlider3, opclose, opicon, opFPStick, opFPScheckbox, opFPSstring, volHitbox;
+elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2, credits, credits2, optionsbg, optitle, opGraphics, opFakeSlider1,
+        opMusicVol, opFakeSlider2, opSFXVol, opFakeSlider3, opclose, opicon, opFPStick, opFPScheckbox, opFPSstring, volHitbox, sliderMV1, sliderMV2, sliderMV3;
+
+//Boolean to check if the slider is active
+int actSl1 = 0, actSl2 = 0, actSl3 = 0;
+int sSSl1();
+int sSSl2();
+int sSSl3();
+
+//Check for hovering objects
+elemGUI *hovObjs[] = {&btt1, &btt2, &btt3, &opFakeSlider1, &opFakeSlider2, &opFakeSlider3};
+
+int qualityRes = 2;
+
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
@@ -155,26 +169,6 @@ int mainLoop(){
 
         SDL_RenderCopy(mainRenderer, bgTexture, NULL, NULL);
 
-        if(e.type == SDL_MOUSEMOTION){ //Check wheter mouse is hovering the buttons
-          if(e.motion.x >= btt1.pos.x && e.motion.x <= btt1.pos.x + btt1.pos.w && e.motion.y >= btt1.pos.y && e.motion.y <= btt1.pos.y + btt1.pos.h) {
-            mouseHover(1);
-          }
-          else if(e.motion.x >= btt2.pos.x && e.motion.x <= btt2.pos.x + btt2.pos.w && e.motion.y >= btt2.pos.y && e.motion.y <= btt2.pos.y + btt2.pos.h) {
-            mouseHover(2);
-          }
-          else if(e.motion.x >= btt3.pos.x && e.motion.x <= btt3.pos.x + btt3.pos.w && e.motion.y >= btt3.pos.y && e.motion.y <= btt3.pos.y + btt3.pos.h) {
-            mouseHover(3);
-          }
-          else{
-            btt1.active = 1;
-            btt1Selected.active = 0;
-            btt2.active = 1;
-            btt2Selected.active = 0;
-            btt3.active = 1;
-            btt3Selected.active = 0;
-          }
-        }
-
 				drawGUI(globalGUI, mainRenderer);
 
         if(FPSEnabled == 1){
@@ -184,6 +178,8 @@ int mainLoop(){
         SDL_RenderPresent(mainRenderer);
 
         while(SDL_PollEvent(&e)!=0){
+
+            checkForMouseHover(e);
 
             stdEventInput(&breakLoop, e, mainWindow); //No function overloading but at least we got the Chinese version of "pass by reference"
 
@@ -208,7 +204,7 @@ int mainLoad(){
 
     //SDL_SetRenderDrawColor(mainRenderer, 0x80, 0xFF, 0xFF, 0xFF); //Set background color
 
-    bgTexture = loadTexture("Assets/BG/mainmenu.bmp", mainRenderer);
+    bgTexture = loadTexture("Assets/BG/mainmenuh.bmp", mainRenderer);
 
     windowIcon = SDL_LoadBMP("Assets/Icon/icon.bmp");
     SDL_SetWindowIcon(mainWindow, windowIcon);
@@ -279,7 +275,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   opFakeSlider1 = createElement(0, GUI_LABEL, (SDL_Rect){300, 150, 350, 35}, (SDL_Color){0,0,0,0},
                         loadFromText("-------------------------------WIP-----------------------------",
-                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &doNothing);
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &sSSl1);
 
   opMusicVol = createElement(0, GUI_LABEL, (SDL_Rect){300, 205, 90, 20}, (SDL_Color){0,0,0,0},
                         loadFromText("Music volume", (SDL_Color){255, 255, 255, 0}, mainRenderer,
@@ -287,7 +283,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   opFakeSlider2 = createElement(0, GUI_LABEL, (SDL_Rect){300, 215, 350, 35}, (SDL_Color){0,0,0,0},
                         loadFromText("-------------------------------WIP-----------------------------",
-                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &doNothing);
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &sSSl2);
 
   opSFXVol = createElement(0, GUI_LABEL, (SDL_Rect){300, 270, 97, 20}, (SDL_Color){0,0,0,0},
                         loadFromText("Effects volume", (SDL_Color){255, 255, 255, 0}, mainRenderer,
@@ -295,7 +291,7 @@ int loadMMAssets(){ //Called in mainLoad
 
   opFakeSlider3 = createElement(0, GUI_LABEL, (SDL_Rect){300, 280, 350, 35}, (SDL_Color){0,0,0,0},
                         loadFromText("-------------------------------WIP-----------------------------",
-                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &doNothing);
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &sSSl3);
 
   opFPSstring = createElement(0, GUI_LABEL, (SDL_Rect){360, 338, 90, 25}, (SDL_Color){0,0,0,0},
                         loadFromText("Show FPS",
@@ -312,7 +308,7 @@ int loadMMAssets(){ //Called in mainLoad
   volHitbox = createElement(0, GUI_LABEL, (SDL_Rect){680, 240, 20, 20}, (SDL_Color){0,0,0,0},
                         loadFromText(" ",
                         (SDL_Color){0, 0, 0, 255}, mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 60), &muteAudio);
-  
+
   volmut = createElement(0, GUI_IMAGE, (SDL_Rect){680, 240, 20, 20}, (SDL_Color){0,0,0,0},
                         loadTexture("Assets/Sound/music.bmp", mainRenderer), &doNothing);
 
@@ -324,6 +320,15 @@ int loadMMAssets(){ //Called in mainLoad
 
   voldw = createElement(0, GUI_IMAGE, (SDL_Rect){670, 220, 20, 20}, (SDL_Color){0,0,0,0},
                         loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinus);
+
+  sliderMV1 = createElement(0, GUI_BUTTON, (SDL_Rect){296, 159, 8, 17}, (SDL_Color){255,255,255,0},
+                        NULL, &doNothing);
+
+  sliderMV2 = createElement(0, GUI_BUTTON, (SDL_Rect){296, 224, 8, 17}, (SDL_Color){255,255,255,0},
+                        NULL, &doNothing);
+
+  sliderMV3 = createElement(0, GUI_BUTTON, (SDL_Rect){296, 289, 8, 17}, (SDL_Color){255,255,255,0},
+                        NULL, &doNothing);
 
   bgMusic = Mix_LoadMUS("Assets/Sound/mainmenu.ogg");
   Mix_PlayMusic(bgMusic, -1);
@@ -357,6 +362,10 @@ int loadMMAssets(){ //Called in mainLoad
   addElement(&globalGUI, &opFPStick);
   addElement(&globalGUI, &opFPSstring);
   addElement(&globalGUI, &opFPScheckbox);
+
+  addElement(&globalGUI, &sliderMV1);
+  addElement(&globalGUI, &sliderMV2);
+  addElement(&globalGUI, &sliderMV3);
 
   return 0;
 
@@ -392,17 +401,45 @@ int startBriscola(int x, int y, Uint32 ptr){
 
 int mouseHover(int bttn) {
   switch(bttn){
-    case 1:
+    case 0:
       btt1.active = 0;
       btt1Selected.active = 1;
     break;
-    case 2:
+    case 1:
       btt2.active = 0;
       btt2Selected.active = 1;
     break;
-    case 3:
+    case 2:
       btt3.active = 0;
       btt3Selected.active = 1;
+    break;
+    case 3:
+      {
+        if(!actSl1) break;
+        int x, y;
+        SDL_GetTruePos(&x, &y);
+        sliderMV1.pos.x = (x>650)?650:(x<300)?300:x;
+        qualityRes = round(2.0f * (float)(sliderMV1.pos.x-300) / 350.0f);
+        printf("%d\n", qualityRes);
+      }
+    break;
+    case 4:
+      {
+        if(!actSl2) break;
+        int x, y;
+        SDL_GetTruePos(&x, &y);
+        sliderMV2.pos.x = (x>650)?650:(x<300)?300:x;
+        Mix_VolumeMusic((int)(128.0f * (float)(sliderMV2.pos.x-300) / 650.0f));
+      }
+    break;
+    case 5:
+      {
+        if(!actSl3) break;
+        int x, y;
+        SDL_GetTruePos(&x, &y);
+        sliderMV3.pos.x = (x>650)?650:(x<300)?300:x;
+        //TODO: implementare effetti sonori
+      }
     break;
   }
 }
@@ -410,6 +447,7 @@ int mouseHover(int bttn) {
 int handleOptions(){
   switch(optionsEnabled){
     case 0:
+
       optionsEnabled = 1;
       optionsbg.active = 1;
       optitle.active = 1;
@@ -426,12 +464,18 @@ int handleOptions(){
       volup.active = 1;
       voldw.active = 1;
       volHitbox.active = 1;
+
+      /*
       if(FPSEnabled == 0){
         opFPStick.active = 0;
       }
       else if(FPSEnabled == 1){
         opFPStick.active = 1;
       }
+      */
+
+      opFPStick.active = FPSEnabled; //Molto complicato così
+
       if(Mix_PausedMusic() == 0){
         volmut2.active = 1;
         volmut.active = 0;
@@ -440,6 +484,11 @@ int handleOptions(){
         volmut2.active = 0;
         volmut.active = 1;
       }
+
+      sliderMV1.active = 1;
+      sliderMV2.active = 1;
+      sliderMV3.active = 1;
+
     break;
     case 1:
       optionsEnabled = 0;
@@ -461,8 +510,13 @@ int handleOptions(){
       volup.active = 0;
       voldw.active = 0;
       volHitbox.active = 0;
+
+      sliderMV1.active = 0;
+      sliderMV2.active = 0;
+      sliderMV3.active = 0;
+
     break;
-  }   
+  }
 }
 
 int enableFPS(){
@@ -477,3 +531,34 @@ int enableFPS(){
     break;
   }
 }
+
+int checkForMouseHover(SDL_Event e){
+
+  if(e.type != SDL_MOUSEMOTION) return 0;
+
+  int i;
+  for(i=0;i<6;i++){
+    if(e.motion.x >= hovObjs[i]->pos.x && e.motion.x <= (hovObjs[i]->pos.x + hovObjs[i]->pos.w) &&
+       e.motion.y >= hovObjs[i]->pos.y && e.motion.y <= (hovObjs[i]->pos.y + hovObjs[i]->pos.h)) {
+         mouseHover(i);
+         break;
+      }
+  }
+
+  if(!(i-6)) { //Put this in the meme with the brain
+    btt1.active = 1;
+    btt1Selected.active = 0;
+    btt2.active = 1;
+    btt2Selected.active = 0;
+    btt3.active = 1;
+    btt3Selected.active = 0;
+  }
+
+  return 0;
+
+}
+
+//Switch State Slider
+int sSSl1() { actSl1 = !actSl1; }
+int sSSl2() { actSl2 = !actSl2; }
+int sSSl3() { actSl3 = !actSl3; }

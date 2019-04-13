@@ -13,7 +13,7 @@ COMPILER_FLAGS =
 LIBRARY_PATHS = -L Lib/SDL/lib/win32
 
 #LINKER FLAGS specifies the libraries we're linking against
-LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_net
+LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_net -lm
 WIN_LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_net
 
 #OBJ NAME specifies the name of our executable

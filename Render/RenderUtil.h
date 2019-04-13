@@ -28,6 +28,9 @@ SDL_Surface* loadSurface(char* source, SDL_PixelFormat* format);
 //Returns the pointer to a loaded image as a texture
 SDL_Texture* loadTexture(char* source, SDL_Renderer* renderer);
 
+//Returns the pointer to a loaded image as a texture with quality settings support
+SDL_Texture* loadTextureRes(char* source, SDL_Renderer* renderer);
+
 //Returns the pointer to a string converted to texture using a custom font
 SDL_Texture* loadFromText(char* text, SDL_Color textColor, SDL_Renderer* renderer, char* fontName, int fontSize);
 

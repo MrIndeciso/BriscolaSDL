@@ -13,6 +13,8 @@ extern SDL_Window* mainWindow;
 
 extern int FPSEnabled;
 
+extern int qualityRes;
+
 //Just SDL stuff
 SDL_Event e;
 
@@ -83,7 +85,7 @@ int initBriscola(){
 
 int setupAssets(){ //Mi inventerò un nome migliore
 
-	briscolaBG = loadTexture("Assets/BG/wooden.bmp", mainRenderer);
+	briscolaBG = loadTextureRes("Assets/BG/wooden", mainRenderer);
 
 	emptyCarta.num = 42;
 
