@@ -53,7 +53,7 @@ int breakLoop = 0;
 
 int mx, my;
 
-elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2, credits, credits2, optionsbg;
+elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2, credits, credits2, optionsbg/*, optitle*/;
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
@@ -269,8 +269,11 @@ int loadMMAssets(){ //Called in mainLoad
                         mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 20), &doNothing);
 
   //Options menu elements start here
-  optionsbg = createElement(0, GUI_IMAGE, (SDL_Rect){270, 50, 480, 350}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/blank.bmp", mainRenderer), &doNothing);
+  optionsbg = createElement(0, GUI_IMAGE, (SDL_Rect){380, 60, 480, 350}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/optionsbg.bmp", mainRenderer), &doNothing);
+
+  //optitle = createElement(0, GUI_LABEL, (SDL_Rect){265, 50, 200, 15}, (SDL_Color){0,0,0,0},
+  //                      loadFromText(, mainRenderer), &doNothing);
 
   bgMusic = Mix_LoadMUS("Assets/Sound/mainmenu.ogg");
   Mix_PlayMusic(bgMusic, -1);
@@ -291,6 +294,7 @@ int loadMMAssets(){ //Called in mainLoad
   addElement(&globalGUI, &credits2);
 
   addElement(&globalGUI, &optionsbg);
+  //addElement(&globalGUI, &optitle);
 
   return 0;
 
