@@ -3,6 +3,7 @@
 #include "Lib/SDL/include/SDL_ttf.h"
 #include "Lib/SDL/include/SDL_net.h"
 #include <stdio.h>
+#include <unistd.h>
 
 #include "Modes/Briscola.h"
 #include "Render/RenderUtil.h"
@@ -27,8 +28,9 @@ int muteAudio(int, int, Uint32);
 int startBriscola(int, int, Uint32);
 int mouseHover(int);
 
-int optionsEnabled = 0;
+int optionsEnabled = 0, FPSEnabled = 0;
 int handleOptions();
+int enableFPS();
 
 
 //The resolution that we render with
@@ -51,9 +53,7 @@ SDL_Event e;
 
 int breakLoop = 0;
 
-int mx, my;
-
-elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2, credits, credits2, optionsbg/*, optitle*/;
+elemGUI logo, btt1, btt1Selected, btt2, btt2Selected, btt3, btt3Selected, volup, voldw, volmut, volmut2, credits, credits2, optionsbg, optitle, opGraphics, opFakeSlider1, opMusicVol, opFakeSlider2, opSFXVol, opFakeSlider3, opclose, opicon, opFPStick, opFPScheckbox, opFPSstring, volHitbox;
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
@@ -176,7 +176,10 @@ int mainLoop(){
         }
 
 				drawGUI(globalGUI, mainRenderer);
-        drawFPS(&fpsDraw, SDL_GetTicks());
+
+        if(FPSEnabled == 1){
+          drawFPS(&fpsDraw, SDL_GetTicks());
+        }
 
         SDL_RenderPresent(mainRenderer);
 
@@ -248,18 +251,6 @@ int loadMMAssets(){ //Called in mainLoad
                         loadFromText("Esci", (SDL_Color){10, 10, 10, 0}, mainRenderer,
                         "Assets/Font/comicz.ttf", 100), &quitGame);
 
-  volmut = createElement(0, GUI_IMAGE, (SDL_Rect){780, 430, 20, 20}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/Sound/music.bmp", mainRenderer), &muteAudio);
-
-  volmut2 = createElement(1, GUI_IMAGE, (SDL_Rect){720, 430, 20, 20}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/Sound/mute.bmp", mainRenderer), &muteAudio);
-
-  volup = createElement(1, GUI_IMAGE, (SDL_Rect){760, 430, 20, 20}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/Sound/high.bmp", mainRenderer), &volPlus);
-
-  voldw = createElement(1, GUI_IMAGE, (SDL_Rect){740, 430, 20, 20}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinus);
-
   credits = createElement(1, GUI_LABEL, (SDL_Rect){5, 436, 140, 10}, (SDL_Color){0,0,0,0},
                         loadFromText("Programming & memes by Roberto Bertolini", (SDL_Color){10, 10, 10, 0},
                         mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 20), &doNothing);
@@ -269,11 +260,70 @@ int loadMMAssets(){ //Called in mainLoad
                         mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 20), &doNothing);
 
   //Options menu elements start here
-  optionsbg = createElement(0, GUI_IMAGE, (SDL_Rect){380, 60, 480, 350}, (SDL_Color){0,0,0,0},
-                        loadTexture("Assets/optionsbg.bmp", mainRenderer), &doNothing);
+  optionsbg = createElement(0, GUI_IMAGE, (SDL_Rect){265, 60, 480, 350}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/MM/Options/optionsbg.bmp", mainRenderer), &doNothing);
 
-  //optitle = createElement(0, GUI_LABEL, (SDL_Rect){265, 50, 200, 15}, (SDL_Color){0,0,0,0},
-  //                      loadFromText(, mainRenderer), &doNothing);
+  optitle = createElement(0, GUI_LABEL, (SDL_Rect){378, 80, 90, 35}, (SDL_Color){0,0,0,0},
+                        loadFromText("Options", (SDL_Color){255, 255, 255, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opicon = createElement(0, GUI_IMAGE, (SDL_Rect){340, 84, 30, 30}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/MM/Options/gear.bmp", mainRenderer), &doNothing);
+
+  opclose = createElement(0, GUI_IMAGE, (SDL_Rect){692, 90, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/MM/Options/quit.bmp", mainRenderer), &handleOptions);
+
+  opGraphics = createElement(0, GUI_LABEL, (SDL_Rect){300, 140, 105, 20}, (SDL_Color){0,0,0,0},
+                        loadFromText("Graphics quality", (SDL_Color){255, 255, 255, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opFakeSlider1 = createElement(0, GUI_LABEL, (SDL_Rect){300, 150, 350, 35}, (SDL_Color){0,0,0,0},
+                        loadFromText("-------------------------------WIP-----------------------------",
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opMusicVol = createElement(0, GUI_LABEL, (SDL_Rect){300, 205, 90, 20}, (SDL_Color){0,0,0,0},
+                        loadFromText("Music volume", (SDL_Color){255, 255, 255, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opFakeSlider2 = createElement(0, GUI_LABEL, (SDL_Rect){300, 215, 350, 35}, (SDL_Color){0,0,0,0},
+                        loadFromText("-------------------------------WIP-----------------------------",
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opSFXVol = createElement(0, GUI_LABEL, (SDL_Rect){300, 270, 97, 20}, (SDL_Color){0,0,0,0},
+                        loadFromText("Effects volume", (SDL_Color){255, 255, 255, 0}, mainRenderer,
+                        "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opFakeSlider3 = createElement(0, GUI_LABEL, (SDL_Rect){300, 280, 350, 35}, (SDL_Color){0,0,0,0},
+                        loadFromText("-------------------------------WIP-----------------------------",
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opFPSstring = createElement(0, GUI_LABEL, (SDL_Rect){360, 338, 90, 25}, (SDL_Color){0,0,0,0},
+                        loadFromText("Show FPS",
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 60), &doNothing);
+
+  opFPScheckbox = createElement(0, GUI_LABEL, (SDL_Rect){300, 322, 50, 50}, (SDL_Color){0,0,0,0},
+                        loadFromText("[ ]",
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 80), &enableFPS);
+
+  opFPStick = createElement(0, GUI_LABEL, (SDL_Rect){313, 338, 25, 25}, (SDL_Color){0,0,0,0},
+                        loadFromText("V",
+                        (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 60), &doNothing);
+
+  volHitbox = createElement(0, GUI_LABEL, (SDL_Rect){680, 240, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadFromText(" ",
+                        (SDL_Color){0, 0, 0, 255}, mainRenderer, "Assets/Font/OpenSans-Regular.ttf", 60), &muteAudio);
+  
+  volmut = createElement(0, GUI_IMAGE, (SDL_Rect){680, 240, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/music.bmp", mainRenderer), &doNothing);
+
+  volmut2 = createElement(0, GUI_IMAGE, (SDL_Rect){680, 240, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/mute.bmp", mainRenderer), &doNothing);
+
+  volup = createElement(0, GUI_IMAGE, (SDL_Rect){690, 220, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/high.bmp", mainRenderer), &volPlus);
+
+  voldw = createElement(0, GUI_IMAGE, (SDL_Rect){670, 220, 20, 20}, (SDL_Color){0,0,0,0},
+                        loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinus);
 
   bgMusic = Mix_LoadMUS("Assets/Sound/mainmenu.ogg");
   Mix_PlayMusic(bgMusic, -1);
@@ -283,10 +333,6 @@ int loadMMAssets(){ //Called in mainLoad
   addElement(&globalGUI, &btt1);
   addElement(&globalGUI, &btt2);
   addElement(&globalGUI, &btt3);
-  addElement(&globalGUI, &volup);
-  addElement(&globalGUI, &voldw);
-  addElement(&globalGUI, &volmut);
-  addElement(&globalGUI, &volmut2);
   addElement(&globalGUI, &btt1Selected);
   addElement(&globalGUI, &btt2Selected);
   addElement(&globalGUI, &btt3Selected);
@@ -294,7 +340,23 @@ int loadMMAssets(){ //Called in mainLoad
   addElement(&globalGUI, &credits2);
 
   addElement(&globalGUI, &optionsbg);
-  //addElement(&globalGUI, &optitle);
+  addElement(&globalGUI, &optitle);
+  addElement(&globalGUI, &opicon);
+  addElement(&globalGUI, &opclose);
+  addElement(&globalGUI, &opGraphics);
+  addElement(&globalGUI, &opFakeSlider1);
+  addElement(&globalGUI, &opMusicVol);
+  addElement(&globalGUI, &opFakeSlider2);
+  addElement(&globalGUI, &volHitbox);
+  addElement(&globalGUI, &volup);
+  addElement(&globalGUI, &voldw);
+  addElement(&globalGUI, &volmut);
+  addElement(&globalGUI, &volmut2);
+  addElement(&globalGUI, &opSFXVol);
+  addElement(&globalGUI, &opFakeSlider3);
+  addElement(&globalGUI, &opFPStick);
+  addElement(&globalGUI, &opFPSstring);
+  addElement(&globalGUI, &opFPScheckbox);
 
   return 0;
 
@@ -350,9 +412,68 @@ int handleOptions(){
     case 0:
       optionsEnabled = 1;
       optionsbg.active = 1;
+      optitle.active = 1;
+      opGraphics.active = 1;
+      opFakeSlider1.active = 1;
+      opMusicVol.active = 1;
+      opFakeSlider2.active = 1;
+      opSFXVol.active = 1;
+      opFakeSlider3.active = 1;
+      opclose.active = 1;
+      opicon.active = 1;
+      opFPScheckbox.active = 1;
+      opFPSstring.active = 1;
+      volup.active = 1;
+      voldw.active = 1;
+      volHitbox.active = 1;
+      if(FPSEnabled == 0){
+        opFPStick.active = 0;
+      }
+      else if(FPSEnabled == 1){
+        opFPStick.active = 1;
+      }
+      if(Mix_PausedMusic() == 0){
+        volmut2.active = 1;
+        volmut.active = 0;
+      }
+      else if(Mix_PausedMusic() == 1){
+        volmut2.active = 0;
+        volmut.active = 1;
+      }
     break;
     case 1:
       optionsEnabled = 0;
       optionsbg.active = 0;
+      optitle.active = 0;
+      opGraphics.active = 0;
+      opFakeSlider1.active = 0;
+      opMusicVol.active = 0;
+      opFakeSlider2.active = 0;
+      opSFXVol.active = 0;
+      opFakeSlider3.active = 0;
+      opclose.active = 0;
+      opicon.active = 0;
+      opFPScheckbox.active = 0;
+      opFPSstring.active = 0;
+      opFPStick.active = 0;
+      volmut2.active = 0;
+      volmut.active = 0;
+      volup.active = 0;
+      voldw.active = 0;
+      volHitbox.active = 0;
+    break;
+  }   
+}
+
+int enableFPS(){
+  switch(FPSEnabled){
+    case 0:
+      FPSEnabled = 1;
+      opFPStick.active = 1;
+    break;
+    case 1:
+      FPSEnabled = 0;
+      opFPStick.active = 0;
+    break;
   }
 }

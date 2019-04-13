@@ -11,6 +11,8 @@
 extern SDL_Renderer *mainRenderer;
 extern SDL_Window* mainWindow;
 
+extern int FPSEnabled;
+
 //Just SDL stuff
 SDL_Event e;
 
@@ -98,13 +100,13 @@ int setupAssets(){ //Mi inventerò un nome migliore
 //Music stuff starts here
 int loadMusicElements(){
 	volmutb = createElement(0, GUI_IMAGE, (SDL_Rect){780, 430, 20, 20}, (SDL_Color){0,0,0,0},
-												loadTexture("Assets/Sound/music.bmp", mainRenderer), &muteAudioB);
+												loadTexture("Assets/Sound/music.old.bmp", mainRenderer), &muteAudioB);
 	volmut2b = createElement(1, GUI_IMAGE, (SDL_Rect){720, 430, 20, 20}, (SDL_Color){0,0,0,0},
-												loadTexture("Assets/Sound/mute.bmp", mainRenderer), &muteAudioB);
+												loadTexture("Assets/Sound/mute.old.bmp", mainRenderer), &muteAudioB);
 	volupb = createElement(1, GUI_IMAGE, (SDL_Rect){760, 430, 20, 20}, (SDL_Color){0,0,0,0},
-												loadTexture("Assets/Sound/high.bmp", mainRenderer), &volPlusB);
+												loadTexture("Assets/Sound/high.old.bmp", mainRenderer), &volPlusB);
 	voldwb = createElement(1, GUI_IMAGE, (SDL_Rect){740, 430, 20, 20}, (SDL_Color){0,0,0,0},
-												loadTexture("Assets/Sound/low.bmp", mainRenderer), &volMinusB);
+												loadTexture("Assets/Sound/low.old.bmp", mainRenderer), &volMinusB);
 
 	addElement(&briscolaGUI, &volmutb);
 	addElement(&briscolaGUI, &volmut2b);
@@ -132,7 +134,9 @@ int mainBriscolaLoop(){
 
 		SDL_RenderCopy(mainRenderer, briscolaBG, NULL, NULL);
 
-		drawFPS(&fpsCtr, SDL_GetTicks());
+		if(FPSEnabled == 1){
+          drawFPS(&fpsCtr, SDL_GetTicks());
+        }
 		drawGUI(briscolaGUI, mainRenderer);
 
 		//drawGUI(cards, mainRenderer);
