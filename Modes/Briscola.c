@@ -401,6 +401,25 @@ int getWinner(){
 
 	printf("%s\n", (pl1.punti==pl2.punti)?"Pareggio":((pl1.punti>pl2.punti)?"Pl1 vince":"Pl2 vince"));
 
+	briscolaLoop = 1;
+	SDL_Texture *winner = NULL;
+
+	if(pl1.punti>pl2.punti){
+		winner = loadFromText("PL1 vince", (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 200);
+	} else if(pl1.punti==pl2.punti){
+		winner = loadFromText("Pareggio", (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 200);
+	} else {
+		winner = loadFromText("PL2 vince", (SDL_Color){255, 255, 255, 0}, mainRenderer, "Assets/Font/comicz.ttf", 200);
+	}
+
+	SDL_RenderClear(mainRenderer);
+
+	SDL_RenderCopy(mainRenderer, winner, NULL, &(SDL_Rect){100, 100, 700, 200});
+
+	SDL_RenderPresent(mainRenderer);
+
+	SDL_Delay(15000);
+
 	return 0;
 
 }
