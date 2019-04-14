@@ -261,7 +261,7 @@ int clickCard3(int x, int y, int ptr){ banco[playingPlayer] = pls[playingPlayer]
 
 int confirmCard(int x, int y, int ptr){
 
-	printf("\n%d\n", pl1.mano[0].num + pl1.mano[1].num + pl1.mano[2].num + pl2.mano[0].num + pl2.mano[1].num + pl2.mano[2].num);
+	//printf("\n%d\n", pl1.mano[0].num + pl1.mano[1].num + pl1.mano[2].num + pl2.mano[0].num + pl2.mano[1].num + pl2.mano[2].num);
 
 	if((pl1.mano[0].num + pl1.mano[1].num + pl1.mano[2].num + pl2.mano[0].num + pl2.mano[1].num + pl2.mano[2].num) == 252){
 		getWinner();
@@ -273,45 +273,46 @@ int confirmCard(int x, int y, int ptr){
 		if(banco[0].seed == banco[1].seed){
 			if(banco[0].take>banco[1].take){
 				//PL1 wins
-				printf("DebuggoniPT1\n");
+				//printf("DebuggoniPT1\n");
 
 				pl1Wins();
 
 			} else if(banco[0].take<banco[1].take){
 				//PL2 wins
-				printf("DebuggoniV2PT1\n");
+				//printf("DebuggoniV2PT1\n");
 
 				pl2Wins();
 
+
 			} else {
-				printf("Dang I am bad and this is wrong\n");
+				//printf("Dang I am bad and this is wrong\n");
 			}
 		} else if(banco[0].seed == jiisus.briscola.seed){
 			//PL1 wins
-			printf("DebuggoniPT2\n");
+			//printf("DebuggoniPT2\n");
 
 			pl1Wins();
 
 		} else if(banco[1].seed == jiisus.briscola.seed){
 			//PL2 wins
-			printf("DebuggoniV2PT2\n");
+			//printf("DebuggoniV2PT2\n");
 
 			pl2Wins();
 
 		} else if(playingPlayer){
 			//PL1 wins
-			printf("DebuggoniPT3\n");
+			//printf("DebuggoniPT3\n");
 
 			pl1Wins();
 
 		} else if(!playingPlayer){
 			//PL2 wins
-			printf("DebuggoniV2PT3\n");
+			//printf("DebuggoniV2PT3\n");
 
 			pl2Wins();
 
 		} else {
-			printf("Dang I am bad and this is wrong\n");
+			//printf("Dang I am bad and this is wrong\n");
 		}
 
 	}
@@ -398,7 +399,7 @@ int getWinner(){
 
 	printf("\n%d\n%d\n", pl1.punti, pl2.punti);
 
-	printf("%s", (pl1.punti==pl2.punti)?"Pareggio":((pl1.punti>pl2.punti)?"Pl1 vince":"Pl2 vince"));
+	printf("%s\n", (pl1.punti==pl2.punti)?"Pareggio":((pl1.punti>pl2.punti)?"Pl1 vince":"Pl2 vince"));
 
 	return 0;
 

@@ -380,7 +380,7 @@ int handleClick(int x, int y, Uint32 ptr){
 
   //elemGUI *shish = ptr;
 
-  printf("Geesus\n");
+  //printf("Geesus\n");
 
   return 0;
 
@@ -399,9 +399,16 @@ int muteAudio(int x, int y, Uint32 ptr) {
 }
 
 int startBriscola(int x, int y, Uint32 ptr){
+
   Mix_HaltMusic();
 	breakLoop = 1;
 	initBriscola();
+
+  int i;
+  for(i=0;i<globalGUI.elemCount;i++) SDL_DestroyTexture(globalGUI.element[i]);
+
+  return 0;
+
 }
 
 int mouseHover(int bttn) {
