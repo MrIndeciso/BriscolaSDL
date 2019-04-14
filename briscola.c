@@ -68,6 +68,8 @@ elemGUI *hovObjs[] = {&btt1, &btt2, &btt3, &opFakeSlider1, &opFakeSlider2, &opFa
 
 int qualityRes = 2;
 
+int leftMousePressed = 0;
+
 Mix_Music *bgMusic = NULL;
 
 gGUI globalGUI;
@@ -184,6 +186,9 @@ int mainLoop(){
             stdEventInput(&breakLoop, e, mainWindow); //No function overloading but at least we got the Chinese version of "pass by reference"
 
             gInput(globalGUI, e);
+
+            if(e.type == SDL_MOUSEBUTTONDOWN) leftMousePressed = 1;
+            if(e.type == SDL_MOUSEBUTTONUP) leftMousePressed = 0;
 
         }
 
@@ -415,7 +420,8 @@ int mouseHover(int bttn) {
     break;
     case 3:
       {
-        if(!actSl1) break;
+        //if(!actSl1) break;
+        if(!leftMousePressed) break;
         int x, y;
         SDL_GetTruePos(&x, &y);
         sliderMV1.pos.x = (x>650)?650:(x<300)?300:x;
@@ -425,7 +431,8 @@ int mouseHover(int bttn) {
     break;
     case 4:
       {
-        if(!actSl2) break;
+        //if(!actSl2) break;
+        if(!leftMousePressed) break;
         int x, y;
         SDL_GetTruePos(&x, &y);
         sliderMV2.pos.x = (x>650)?650:(x<300)?300:x;
@@ -434,7 +441,8 @@ int mouseHover(int bttn) {
     break;
     case 5:
       {
-        if(!actSl3) break;
+        //if(!actSl3) break;
+        if(!leftMousePressed) break;
         int x, y;
         SDL_GetTruePos(&x, &y);
         sliderMV3.pos.x = (x>650)?650:(x<300)?300:x;
