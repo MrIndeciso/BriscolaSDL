@@ -3,6 +3,8 @@
 #include <time.h>
 #include <stdio.h> //Just for debug purposes
 
+extern int qualityRes;
+
 int initMazzo(Mazzo *mazzo, SDL_Renderer *renderer){
 	//Cuori, quadri, fiori, picche
 	//Ordine 1-10
@@ -13,8 +15,6 @@ int initMazzo(Mazzo *mazzo, SDL_Renderer *renderer){
 										25, 26, 27, 28, 29, 30, 31, 32, 33, 34
 	}; //If you want to understand this, just have a look at those card textures that we absolutely didn't steal
 
-	const int startX = 155; //Number of pixels we gotta skip
-
   const int cardTake[10] = {9, 0, 8, 1, 2, 3, 4, 5, 6, 7};
   const int cardValue[10] = {11, 0, 10, 0, 0, 0, 0, 2, 3, 4};
 
@@ -23,8 +23,8 @@ int initMazzo(Mazzo *mazzo, SDL_Renderer *renderer){
   int i;
 
   SDL_Rect texturePos;
-  texturePos.h = 454;
-  texturePos.w = 234;
+  texturePos.h = (qualityRes==2)?454:227;
+  texturePos.w = (qualityRes==2)?234:117;
 
 
   for(i=0;i<40;i++){
@@ -33,13 +33,13 @@ int initMazzo(Mazzo *mazzo, SDL_Renderer *renderer){
     mazzo->carte[i].seed = i/10;
     mazzo->carte[i].take = cardTake[i%10];
     mazzo->carte[i].absPos = i;
-    texturePos.x = 310 + ((mapCardPos[i]-1)/3 * texturePos.w);
+    texturePos.x = ((qualityRes==2)?310:155) + ((mapCardPos[i]-1)/3 * texturePos.w);
     texturePos.y = (mapCardPos[i]-1)%3 * texturePos.h;
     mazzo->carte[i].pos = texturePos;
   }
 
-  mazzo->texture = loadTexture("Assets/Briscola/Milanesi.bmp", renderer);
-	mazzo->mazzoGirato = (SDL_Rect){0, 0, 310, 566};
+  mazzo->texture = loadTextureRes("Assets/Briscola/Milanesi", renderer);
+	mazzo->mazzoGirato = (SDL_Rect){0, 0, qualityRes==2?310:155, qualityRes==2?566:283};
 
   return 0;
 

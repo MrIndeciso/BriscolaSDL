@@ -7,7 +7,7 @@ WCC = i686-w64-mingw32-gcc
 
 #COMPILER FLAGS specifies the additional compilation options we're using
 # -w suppresses all warning
-COMPILER_FLAGS =
+COMPILER_FLAGS = -w
 
 #LIBRARY_PATHS specifies the additional library paths we'll need 
 LIBRARY_PATHS = -L Lib/SDL/lib/win32
